@@ -26,12 +26,14 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://vevix.s3-ap-southeast-2.amazonaws.com/pixel/</InstallUrl>
+    <UpdateUrl>https://vevix.s3-ap-southeast-2.amazonaws.com/pixel/</UpdateUrl>
     <TargetCulture>en-US</TargetCulture>
     <ProductName>Pixel</ProductName>
     <PublisherName>vevix</PublisherName>
     <MinimumRequiredVersion>1.0.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>

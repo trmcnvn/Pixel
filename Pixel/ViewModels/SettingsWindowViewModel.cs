@@ -95,14 +95,11 @@ namespace Pixel.ViewModels {
     private void ApplySettings() {
       // Deal with hotkeys
       try {
-        if (!Properties.Settings.Default.ScreenHotKey.Equals(((Settings)Settings).ScreenHotKey)) {
-          App.HotKeyManager.Unregister(Properties.Settings.Default.ScreenHotKey);
-          App.HotKeyManager.Register(((Settings)Settings).ScreenHotKey);
-        }
-        if (!Properties.Settings.Default.SelectionHotKey.Equals(((Settings)Settings).SelectionHotKey)) {
-          App.HotKeyManager.Unregister(Properties.Settings.Default.SelectionHotKey);
-          App.HotKeyManager.Register(((Settings)Settings).SelectionHotKey);
-        }
+        App.HotKeyManager.Unregister(Properties.Settings.Default.ScreenHotKey);
+        App.HotKeyManager.Unregister(Properties.Settings.Default.SelectionHotKey);
+
+        App.HotKeyManager.Register(((Settings)Settings).ScreenHotKey);
+        App.HotKeyManager.Register(((Settings)Settings).SelectionHotKey);
       } catch (Exception e) {
         Messenger.Raise(new TaskDialogMessage(new TaskDialogOptions {
           Title = "Settings",
