@@ -198,7 +198,7 @@ namespace Pixel.ViewModels {
     private void Upload() {
       var msg = new OpeningFileSelectionMessage {
         Title = "Upload Images",
-        Filter = "Image files (*.jpg, *.gif, *.png, *.bmp)|*.jpg;*.gif;*.png;*.bmp",
+        Filter = "Image files (*.jpg, *.gif, *.png, *.bmp, *.tiff, *.pdf)|*.jpg;*.gif;*.png;*.bmp;*.tiff;*.pdf",
         MultiSelect = true
       };
       var rep = Messenger.GetResponse(msg);
