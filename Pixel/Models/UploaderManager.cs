@@ -16,14 +16,15 @@ namespace Pixel.Models {
 
     internal void LoadUploaders() {
       var assCat = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-      var plugins = new DirectoryCatalog(App.PluginDirectory);
-      var aggCat = new AggregateCatalog(assCat, plugins);
-      Uploaders = new CompositionContainer(aggCat).GetExportedValues<IUploader>();
+      Uploaders = new CompositionContainer(new AggregateCatalog(assCat)).GetExportedValues<IUploader>();
     }
 
-    public void Initialize() {
-      ActiveUploader = Uploaders.FirstOrDefault(u => u.Name == Settings.Default.ImageUploader);
-      if (ActiveUploader == null) return;
+    public void Initialize(string uploaderName) {
+      ActiveUploader = Uploaders.FirstOrDefault(u => u.Name == uploaderName);
+      if (ActiveUploader == null) {
+        ActiveUploader = Uploaders.First(u => u.Name == "Imgur");
+        return;
+      }
       ActiveUploader.ImageUploaded += (s, e) => OnImageUploaded(e);
       ActiveUploader.Initialize();
     }

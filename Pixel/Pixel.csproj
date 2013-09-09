@@ -33,7 +33,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -170,8 +170,8 @@
     <Compile Include="Extensions\WindowCloseCancelBehaviorEx.cs" />
     <Compile Include="Helpers\ImageFormats.cs" />
     <Compile Include="Helpers\Win32.cs" />
-    <Compile Include="Models\Imgur\ImgurClient.cs" />
-    <Compile Include="Models\Imgur\ImgurUploader.cs" />
+    <Compile Include="Uploaders\Imgur\ImgurClient.cs" />
+    <Compile Include="Uploaders\Imgur\ImgurUploader.cs" />
     <Compile Include="Models\IUploader.cs" />
     <Compile Include="Models\UploaderManager.cs" />
     <Compile Include="ViewModels\CaptureWindowViewModel.cs" />

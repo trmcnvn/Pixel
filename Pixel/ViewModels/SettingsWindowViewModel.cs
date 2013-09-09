@@ -114,9 +114,8 @@ namespace Pixel.ViewModels {
         return;
       }
 
-      // Initialize the new uploader, if there is one
       if (!Properties.Settings.Default.ImageUploader.Equals(((Settings)Settings).ImageUploader)) {
-        App.UploaderManager.Initialize();
+        App.UploaderManager.Initialize(((Settings)Settings).ImageUploader);
       }
 
       // Apply the settings to Properties.Settings.Default

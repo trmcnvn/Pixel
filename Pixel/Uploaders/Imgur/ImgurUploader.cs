@@ -3,8 +3,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Pixel.Models;
 
-namespace Pixel.Models.Imgur {
+namespace Pixel.Uploaders.Imgur {
   [Export(typeof(IUploader))]
   public class ImgurUploader : IUploader {
     private ImgurClient _client;

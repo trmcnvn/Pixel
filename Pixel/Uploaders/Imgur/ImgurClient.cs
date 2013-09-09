@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Pixel.Models.Imgur {
+namespace Pixel.Uploaders.Imgur {
   public class ImgurClient {
     private readonly string _clientId;
     private readonly Uri _uploadUri = new Uri("https://api.imgur.com/3/image.xml");

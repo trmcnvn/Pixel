@@ -37,19 +37,11 @@ namespace Pixel {
       }
     }
 
-    public static string PluginDirectory {
-      get { return Path.Combine(RoamingDirectory, "Plugins"); }
-    }
-
     protected override void OnStartup(StartupEventArgs e) {
       base.OnStartup(e);
 
       if (!Directory.Exists(RoamingDirectory)) {
         Directory.CreateDirectory(RoamingDirectory);
-      }
-
-      if (!Directory.Exists(PluginDirectory)) {
-        Directory.CreateDirectory(PluginDirectory);
       }
 
       // Livet
@@ -68,11 +60,11 @@ namespace Pixel {
           MainIcon = VistaTaskDialogIcon.Error,
           CommonButtons = TaskDialogCommonButtons.Close
         });
-        Current.Shutdown();
+        Environment.Exit(0);
       }
 
       UploaderManager.LoadUploaders();
-      UploaderManager.Initialize();
+      UploaderManager.Initialize(Settings.Default.ImageUploader);
     }
 
     protected override void OnExit(ExitEventArgs e) {

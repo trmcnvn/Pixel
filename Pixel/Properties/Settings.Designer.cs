@@ -133,13 +133,9 @@ namespace Pixel.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-        <?xml version=""1.0"" encoding=""utf-16""?>
-        <HotKey xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-        <Key>D3</Key>
-        <Modifiers>Control Shift</Modifiers>
-        </HotKey>
-      ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<HotKey xmlns:xsi=\"http://www.w3.org/200" +
+            "1/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Key>D3</" +
+            "Key>\r\n  <Modifiers>Control Shift</Modifiers>\r\n</HotKey>")]
         public global::GlobalHotKey.HotKey ScreenHotKey {
             get {
                 return ((global::GlobalHotKey.HotKey)(this["ScreenHotKey"]));
@@ -151,13 +147,9 @@ namespace Pixel.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-        <?xml version=""1.0"" encoding=""utf-16""?>
-        <HotKey xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-        <Key>D4</Key>
-        <Modifiers>Control Shift</Modifiers>
-        </HotKey>
-      ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<HotKey xmlns:xsi=\"http://www.w3.org/200" +
+            "1/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Key>D4</" +
+            "Key>\r\n  <Modifiers>Control Shift</Modifiers>\r\n</HotKey>")]
         public global::GlobalHotKey.HotKey SelectionHotKey {
             get {
                 return ((global::GlobalHotKey.HotKey)(this["SelectionHotKey"]));
