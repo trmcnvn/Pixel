@@ -88,7 +88,7 @@
                     <MenuItem Header="Pixel Website">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <ei:LaunchUriOrFileAction Path="http://www.vevix.net/pixel" />
+                                <ei:LaunchUriOrFileAction Path="http://www.vevix.net/Pixel" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </MenuItem>
