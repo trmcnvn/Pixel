@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Configuration;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Input;
 using GlobalHotKey;
 using Livet;
 using Livet.Commands;
 using Livet.EventListeners;
 using Livet.Messaging.Windows;
-using Microsoft.Win32;
 using Pixel.Extensions;
 using Pixel.Properties;
 using Pixel.Views.Messaging;
@@ -121,17 +118,6 @@ namespace Pixel.ViewModels {
           .GetProperty(((SettingsProperty)prop).Name)
           .SetValue(Properties.Settings.Default,
             Settings.GetType().GetProperty(((SettingsProperty)prop).Name).GetValue(Settings));
-      }
-
-      // Do the registry work for RunOnStartup
-      var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-      if (key != null) {
-        if (Properties.Settings.Default.RunOnStartup) {
-          if (!key.GetValueNames().Contains(App.ApplicationName))
-            key.SetValue(App.ApplicationName, Assembly.GetExecutingAssembly().Location);
-        } else if (key.GetValueNames().Contains(App.ApplicationName))
-          key.DeleteValue(App.ApplicationName);
-        key.Close();
       }
 
       Properties.Settings.Default.Save();

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Threading;
 using System.Windows;
 using GlobalHotKey;
 using Livet;
+using Microsoft.Win32;
 using Pixel.Models;
 using Pixel.Properties;
 using TaskDialogInterop;
@@ -27,7 +29,7 @@ namespace Pixel {
     public static string ApplicationVersion {
       get {
         var ver = Assembly.GetExecutingAssembly().GetName().Version;
-        return string.Format("{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build);
+        return string.Format("{0}.{1}.{2}.{3}", ver.Major, ver.Minor, ver.Build, ver.Revision);
       }
     }
 
@@ -68,6 +70,16 @@ namespace Pixel {
     }
 
     protected override void OnExit(ExitEventArgs e) {
+      // Do the registry work for RunOnStartup
+      var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+      if (key != null) {
+        if (Settings.Default.RunOnStartup) {
+          key.SetValue(ApplicationName, Assembly.GetExecutingAssembly().Location);
+        } else if (key.GetValueNames().Contains(ApplicationName))
+          key.DeleteValue(ApplicationName);
+        key.Close();
+      }
+
       Settings.Default.Save();
       base.OnExit(e);
     }
