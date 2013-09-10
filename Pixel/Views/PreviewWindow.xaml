@@ -15,7 +15,7 @@
         <i:EventTrigger EventName="Closed">
             <l:DataContextDisposeAction />
         </i:EventTrigger>
-        <ei:KeyTrigger Key="Escape">
+        <ei:KeyTrigger Key="Escape" FiredOn="KeyUp">
             <i:InvokeCommandAction Command="{Binding ExitCommand}" />
         </ei:KeyTrigger>
         <ei:KeyTrigger Modifiers="Control" Key="S">

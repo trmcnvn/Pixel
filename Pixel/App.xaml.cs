@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Deployment.Application;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -33,25 +34,17 @@ namespace Pixel {
       }
     }
 
-    public static string RoamingDirectory {
-      get {
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationName);
-      }
-    }
-
     protected override void OnStartup(StartupEventArgs e) {
       base.OnStartup(e);
-
-      if (!Directory.Exists(RoamingDirectory)) {
-        Directory.CreateDirectory(RoamingDirectory);
-      }
 
       // Livet
       DispatcherHelper.UIDispatcher = Dispatcher;
 
       // Mutli-code JIT
-      ProfileOptimization.SetProfileRoot(RoamingDirectory);
-      ProfileOptimization.StartProfile("pixel.profile");
+      if (ApplicationDeployment.IsNetworkDeployed) {
+        ProfileOptimization.SetProfileRoot(ApplicationDeployment.CurrentDeployment.DataDirectory);
+        ProfileOptimization.StartProfile("pixel.profile");
+      }
 
       _appMutex = new Mutex(true, "Pixel-7331B770-095A-4220-924E-8C22B14701E5");
       if (!_appMutex.WaitOne(0, false)) {

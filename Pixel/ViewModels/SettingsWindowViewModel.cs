@@ -20,6 +20,8 @@ namespace Pixel.ViewModels {
     private bool _settingsChanged;
 
     public SettingsWindowViewModel() {
+      Properties.Settings.Default.Reload();
+
       Settings = Properties.Settings.Default.DeepClone();
       CompositeDisposable.Add(new PropertyChangedEventListener((Settings)Settings, (s, e) => SettingsChanged = true));
     }
