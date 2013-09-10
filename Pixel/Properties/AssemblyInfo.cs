@@ -7,11 +7,11 @@ using System.Windows;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Pixel")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An easy way to capture and share screenshots on Windows.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("vevix")]
 [assembly: AssemblyProduct("Pixel")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright © 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
