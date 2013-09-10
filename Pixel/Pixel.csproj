@@ -35,7 +35,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -171,7 +171,6 @@
     <Compile Include="Extensions\NotificationObjectEx.cs" />
     <Compile Include="Extensions\WindowCloseCancelBehaviorEx.cs" />
     <Compile Include="Helpers\ImageFormats.cs" />
-    <Compile Include="Helpers\Win32.cs" />
     <Compile Include="Uploaders\Imgur\ImgurClient.cs" />
     <Compile Include="Uploaders\Imgur\ImgurUploader.cs" />
     <Compile Include="Models\IUploader.cs" />

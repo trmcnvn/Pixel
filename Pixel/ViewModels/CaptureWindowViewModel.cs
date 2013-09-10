@@ -22,7 +22,7 @@ namespace Pixel.ViewModels {
     public ListenerCommand<Rectangle> CaptureCommand {
       get {
         return _captureCommand ?? (_captureCommand = new ListenerCommand<Rectangle>(r => {
-          Messenger.Raise(new WindowActionMessage(WindowAction.Close));
+          ExitCommand.Execute();
           var rep =
             Messenger.GetResponse(new CaptureScreenMessage((int)r.Width, (int)r.Height, (int)Canvas.GetLeft(r),
               (int)Canvas.GetTop(r)));

@@ -44,7 +44,7 @@ namespace Pixel.ViewModels {
                (_settingsCommand =
                  new ViewModelCommand(() => {
                    var vm = new SettingsWindowViewModel();
-                   Messenger.Raise(new TransitionMessage(typeof(SettingsWindow), vm, TransitionMode.Modal));
+                   Messenger.Raise(new TransitionMessage(typeof(SettingsWindow), vm, TransitionMode.Modal, "SettingsWindow"));
                  }));
       }
     }
@@ -81,7 +81,7 @@ namespace Pixel.ViewModels {
       get {
         return _captureSelectionCommand ?? (_captureSelectionCommand = new ViewModelCommand(() => {
           var vm = new CaptureWindowViewModel();
-          Messenger.Raise(new TransitionMessage(typeof(CaptureWindow), vm, TransitionMode.Normal));
+          Messenger.Raise(new TransitionMessage(typeof(CaptureWindow), vm, TransitionMode.Normal, "CaptureWindow"));
         }));
       }
     }
@@ -173,8 +173,7 @@ namespace Pixel.ViewModels {
       if (hk.Equals(Settings.Default.ScreenHotKey)) {
         Capture();
       } else if (hk.Equals(Settings.Default.SelectionHotKey)) {
-        var vm = new CaptureWindowViewModel();
-        Messenger.Raise(new TransitionMessage(typeof(CaptureWindow), vm, TransitionMode.Normal));
+        CaptureSelectionCommand.Execute();
       }
     }
 
@@ -214,7 +213,7 @@ namespace Pixel.ViewModels {
           Screen.PrimaryScreen.Bounds.Height, Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y));
       if (rep.Response == null) return;
       var vm = new PreviewWindowViewModel(rep.Response);
-      Messenger.Raise(new TransitionMessage(typeof(PreviewWindow), vm, TransitionMode.Normal));
+      Messenger.Raise(new TransitionMessage(typeof(PreviewWindow), vm, TransitionMode.Normal, "PreviewWindow"));
     }
   }
 }

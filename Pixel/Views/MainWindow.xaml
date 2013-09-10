@@ -35,8 +35,14 @@
         <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
             <behaviors:CaptureScreenInteractionMessageAction />
         </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
+        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="SettingsWindow">
             <l:TransitionInteractionMessageAction />
+        </l:InteractionMessageTrigger>
+        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="CaptureWindow">
+            <l:TransitionInteractionMessageAction />
+        </l:InteractionMessageTrigger>
+        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="PreviewWindow">
+            <l:TransitionInteractionMessageAction IsOwned="False" />
         </l:InteractionMessageTrigger>
         <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
             <l:WindowInteractionMessageAction />

@@ -29,8 +29,8 @@ namespace Pixel.Views.Behaviors {
     }
 
     protected override void OnDetaching() {
-      base.OnDetaching();
       _disposable.Dispose();
+      base.OnDetaching();
     }
   }
 }

@@ -121,7 +121,7 @@ namespace Pixel.ViewModels {
       }
 
       Properties.Settings.Default.Save();
-      Messenger.Raise(new WindowActionMessage(WindowAction.Close));
+      ButtonCancelCommand.Execute();
     }
   }
 }

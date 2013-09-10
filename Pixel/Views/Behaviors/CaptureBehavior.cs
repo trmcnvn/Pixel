@@ -31,8 +31,8 @@ namespace Pixel.Views.Behaviors {
     }
 
     protected override void OnDetaching() {
-      base.OnDetaching();
       _disposable.Dispose();
+      base.OnDetaching();
     }
 
     private void MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -19,7 +20,7 @@ namespace Pixel.ViewModels {
     private ViewModelCommand _uploadCommand;
 
     public PreviewWindowViewModel(string filePath) {
-      ImagePath = filePath;
+      _imagePath = filePath;
     }
 
     public string ImagePath {
@@ -53,7 +54,7 @@ namespace Pixel.ViewModels {
                  var tmpFile = Path.GetTempFileName();
                  Save(tmpFile);
                  App.UploaderManager.ActiveUploader.Upload(tmpFile);
-                 Messenger.Raise(new WindowActionMessage(WindowAction.Close));
+                 ExitCommand.Execute();
                }));
       }
     }
@@ -82,9 +83,10 @@ namespace Pixel.ViewModels {
             break;
           case ImageFormats.Jpg:
             var encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
-            var encParams = new EncoderParameters(1);
-            encParams.Param[0] = new EncoderParameter(Encoder.Quality, Settings.Default.ImageQuality);
-            image.Save(file, encoder, encParams);
+            using (var encParams = new EncoderParameters(1)) {
+              encParams.Param[0] = new EncoderParameter(Encoder.Quality, Settings.Default.ImageQuality);
+              image.Save(file, encoder, encParams);
+            }
             break;
           case ImageFormats.Bmp:
             image.Save(file, ImageFormat.Bmp);

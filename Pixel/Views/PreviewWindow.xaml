@@ -4,7 +4,6 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        xmlns:pixel="clr-namespace:Pixel"
         Title="Preview Image" Height="600" Width="800" Icon="{StaticResource AppIcon}">
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
