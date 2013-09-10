@@ -9,6 +9,9 @@
         Title="CaptureWindow" Height="300" Width="300"
         ShowInTaskbar="False" WindowStyle="None" WindowState="Maximized" AllowsTransparency="True" Background="Black"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Topmost="True" Cursor="Cross" Opacity="0.4">
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />
+    </Window.InputBindings>
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
             <l:WindowInteractionMessageAction />
@@ -22,9 +25,6 @@
         <i:EventTrigger EventName="Closed">
             <l:DataContextDisposeAction />
         </i:EventTrigger>
-        <ei:KeyTrigger Key="Escape" FiredOn="KeyUp">
-            <i:InvokeCommandAction Command="{Binding ExitCommand}" />
-        </ei:KeyTrigger>
     </i:Interaction.Triggers>
 
     <i:Interaction.Behaviors>

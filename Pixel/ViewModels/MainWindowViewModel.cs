@@ -44,7 +44,8 @@ namespace Pixel.ViewModels {
                (_settingsCommand =
                  new ViewModelCommand(() => {
                    var vm = new SettingsWindowViewModel();
-                   Messenger.Raise(new TransitionMessage(typeof(SettingsWindow), vm, TransitionMode.Modal, "SettingsWindow"));
+                   Messenger.Raise(new TransitionMessage(typeof(SettingsWindow), vm, TransitionMode.Modal,
+                     "SettingsWindow"));
                  }));
       }
     }

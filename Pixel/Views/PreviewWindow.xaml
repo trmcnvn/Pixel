@@ -5,6 +5,9 @@
         xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="Preview Image" Height="600" Width="800" Icon="{StaticResource AppIcon}">
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />
+    </Window.InputBindings>
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
             <l:SaveFileDialogInteractionMessageAction />
@@ -15,9 +18,6 @@
         <i:EventTrigger EventName="Closed">
             <l:DataContextDisposeAction />
         </i:EventTrigger>
-        <ei:KeyTrigger Key="Escape" FiredOn="KeyUp">
-            <i:InvokeCommandAction Command="{Binding ExitCommand}" />
-        </ei:KeyTrigger>
         <ei:KeyTrigger Modifiers="Control" Key="S">
             <i:InvokeCommandAction Command="{Binding SaveCommand}" />
         </ei:KeyTrigger>

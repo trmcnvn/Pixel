@@ -28,9 +28,13 @@ namespace Pixel {
     }
 
     public static string ApplicationVersion {
+      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(4); }
+    }
+
+    public static string DataDirectory {
       get {
-        var ver = Assembly.GetExecutingAssembly().GetName().Version;
-        return string.Format("{0}.{1}.{2}.{3}", ver.Major, ver.Minor, ver.Build, ver.Revision);
+        return Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory,
+          ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4));
       }
     }
 
@@ -40,9 +44,10 @@ namespace Pixel {
       // Livet
       DispatcherHelper.UIDispatcher = Dispatcher;
 
-      // Mutli-code JIT
+      // Installed app
       if (ApplicationDeployment.IsNetworkDeployed) {
-        ProfileOptimization.SetProfileRoot(ApplicationDeployment.CurrentDeployment.DataDirectory);
+        // Mutli-code JIT
+        ProfileOptimization.SetProfileRoot(DataDirectory);
         ProfileOptimization.StartProfile("pixel.profile");
       }
 
