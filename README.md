@@ -8,8 +8,7 @@ Pixel provides you with an easy to use interface and takes advantage of system-w
 
 ## Install
 
-To install Pixel, simply download the [setup.exe](https://s3-ap-southeast-2.amazonaws.com/vevix/pixel/setup.exe) 
-or visit the [publish page](http://vevix.s3-ap-southeast-2.amazonaws.com/pixel/publish.htm)
+Download the package from releases!
 
 ## License
 
