@@ -8,7 +8,7 @@ Pixel provides you with an easy to use interface and takes advantage of system-w
 
 ## Install
 
-Download the package from [here](https://github.com/vevix/Pixel/releases/tag/v1.0.7)
+Download the installer [here](https://s3-ap-southeast-2.amazonaws.com/vevix/pixel/setup.exe)
 
 ## License
 

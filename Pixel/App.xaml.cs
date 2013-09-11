@@ -46,12 +46,6 @@ namespace Pixel {
         Environment.Exit(0);
       }
 
-      if (Settings.Default.Update) {
-        Settings.Default.Upgrade();
-        Settings.Default.Update = false;
-        Settings.Default.Save();
-      }
-
       UploaderManager.LoadUploaders();
       UploaderManager.Initialize(Settings.Default.ImageUploader);
     }
