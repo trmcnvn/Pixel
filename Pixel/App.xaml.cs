@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Deployment.Application;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime;
 using System.Threading;
 using System.Windows;
 using GlobalHotKey;
@@ -28,14 +25,7 @@ namespace Pixel {
     }
 
     public static string ApplicationVersion {
-      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(4); }
-    }
-
-    public static string DataDirectory {
-      get {
-        return Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory,
-          ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4));
-      }
+      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(3); }
     }
 
     protected override void OnStartup(StartupEventArgs e) {
@@ -43,13 +33,6 @@ namespace Pixel {
 
       // Livet
       DispatcherHelper.UIDispatcher = Dispatcher;
-
-      // Installed app
-      if (ApplicationDeployment.IsNetworkDeployed) {
-        // Mutli-code JIT
-        ProfileOptimization.SetProfileRoot(DataDirectory);
-        ProfileOptimization.StartProfile("pixel.profile");
-      }
 
       _appMutex = new Mutex(true, "Pixel-7331B770-095A-4220-924E-8C22B14701E5");
       if (!_appMutex.WaitOne(0, false)) {
@@ -61,6 +44,12 @@ namespace Pixel {
           CommonButtons = TaskDialogCommonButtons.Close
         });
         Environment.Exit(0);
+      }
+
+      if (Settings.Default.Update) {
+        Settings.Default.Upgrade();
+        Settings.Default.Update = false;
+        Settings.Default.Save();
       }
 
       UploaderManager.LoadUploaders();

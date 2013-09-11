@@ -158,5 +158,17 @@ namespace Pixel.Properties {
                 this["SelectionHotKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Update {
+            get {
+                return ((bool)(this["Update"]));
+            }
+            set {
+                this["Update"] = value;
+            }
+        }
     }
 }

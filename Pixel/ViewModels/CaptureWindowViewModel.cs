@@ -15,7 +15,8 @@ namespace Pixel.ViewModels {
     public ViewModelCommand ExitCommand {
       get {
         return _exitCommand ??
-               (_exitCommand = new ViewModelCommand(() => Messenger.Raise(new WindowActionMessage(WindowAction.Close))));
+               (_exitCommand =
+                 new ViewModelCommand(() => Messenger.Raise(new WindowActionMessage(WindowAction.Close))));
       }
     }
 
@@ -24,11 +25,13 @@ namespace Pixel.ViewModels {
         return _captureCommand ?? (_captureCommand = new ListenerCommand<Rectangle>(r => {
           ExitCommand.Execute();
           var rep =
-            Messenger.GetResponse(new CaptureScreenMessage((int)r.Width, (int)r.Height, (int)Canvas.GetLeft(r),
+            Messenger.GetResponse(new CaptureScreenMessage((int)r.Width, (int)r.Height,
+              (int)Canvas.GetLeft(r),
               (int)Canvas.GetTop(r)));
           if (rep.Response == null) return;
           var vm = new PreviewWindowViewModel(rep.Response);
-          Messenger.Raise(new TransitionMessage(typeof(PreviewWindow), vm, TransitionMode.Normal, "PreviewWindow"));
+          Messenger.Raise(new TransitionMessage(typeof(PreviewWindow), vm, TransitionMode.Normal,
+            "PreviewWindow"));
         }));
       }
     }
