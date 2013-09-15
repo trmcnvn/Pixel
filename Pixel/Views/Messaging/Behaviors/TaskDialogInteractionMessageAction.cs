@@ -12,7 +12,6 @@ namespace Pixel.Views.Messaging.Behaviors
       var tdm = message as TaskDialogMessage;
       if (tdm == null) return;
       var options = tdm.Options;
-      options.Owner = Window.GetWindow(AssociatedObject);
       var result = TaskDialog.Show(options);
       tdm.Response = result;
     }

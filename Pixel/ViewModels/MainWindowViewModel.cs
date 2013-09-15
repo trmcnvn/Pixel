@@ -37,6 +37,7 @@ namespace Pixel.ViewModels
     public MainWindowViewModel()
     {
       ImageHistory = new ObservableCollection<string>();
+      IsVisible = !Settings.Default.StartMinimized;
     }
 
     #region Commands
@@ -153,8 +154,6 @@ namespace Pixel.ViewModels
     {
       try
       {
-        IsVisible = !Settings.Default.StartMinimized;
-
         App.HotKeyManager.Register(Settings.Default.ScreenHotKey);
         App.HotKeyManager.Register(Settings.Default.SelectionHotKey);
 

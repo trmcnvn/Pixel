@@ -29,11 +29,9 @@
         </Binding>
     </Window.WindowState>
     <Window.Visibility>
-        <Binding Path="IsVisible">
+        <Binding Path="IsVisible" Mode="OneWay">
             <Binding.Converter>
-                <l:VisibilityAndBooleanConverter ConvertWhenTrue="Visible" ConvertWhenFalse="Hidden"
-                                                 ConvertBackWhenVisible="True" ConvertBackWhenHidden="False"
-                                                 ConvertBackDefaultBooleanValue="True" />
+                <l:VisibilityAndBooleanConverter ConvertWhenTrue="Visible" ConvertWhenFalse="Hidden"/>
             </Binding.Converter>
         </Binding>
     </Window.Visibility>
