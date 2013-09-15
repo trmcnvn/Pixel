@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Pixel.Models {
-  public interface IUploader {
+namespace Pixel.Models
+{
+  public interface IUploader
+  {
     string Name { get; }
 
     void Initialize();
@@ -11,12 +13,14 @@ namespace Pixel.Models {
     event EventHandler<UploaderEventArgs> ImageUploaded;
   }
 
-  public enum UploaderState {
+  public enum UploaderState
+  {
     Success,
     Failed
   }
 
-  public class UploaderEventArgs : EventArgs {
+  public class UploaderEventArgs : EventArgs
+  {
     public UploaderState State { get; set; }
     public Uri ImageUrl { get; set; }
   }

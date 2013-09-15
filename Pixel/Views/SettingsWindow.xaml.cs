@@ -1,9 +1,12 @@
-﻿namespace Pixel.Views {
+﻿namespace Pixel.Views
+{
   /// <summary>
   ///   Interaction logic for SettingsWindow.xaml
   /// </summary>
-  public partial class SettingsWindow {
-    public SettingsWindow() {
+  public partial class SettingsWindow
+  {
+    public SettingsWindow()
+    {
       InitializeComponent();
     }
   }

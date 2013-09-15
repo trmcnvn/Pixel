@@ -1,5 +1,7 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Pixel.Properties" GeneratedClassName="Settings">
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="Pixel.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
@@ -31,19 +33,19 @@
     </Setting>
     <Setting Name="ScreenHotKey" Type="GlobalHotKey.HotKey" Scope="User">
       <Value Profile="(Default)">
-          &lt;HotKey xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-            &lt;Key&gt;D3&lt;/Key&gt;
-            &lt;Modifiers&gt;Control Shift&lt;/Modifiers&gt;
-          &lt;/HotKey&gt;
-        </Value>
+        &lt;HotKey xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+        &lt;Key&gt;D3&lt;/Key&gt;
+        &lt;Modifiers&gt;Control Shift&lt;/Modifiers&gt;
+        &lt;/HotKey&gt;
+      </Value>
     </Setting>
     <Setting Name="SelectionHotKey" Type="GlobalHotKey.HotKey" Scope="User">
       <Value Profile="(Default)">
-          &lt;HotKey xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-            &lt;Key&gt;D4&lt;/Key&gt;
-            &lt;Modifiers&gt;Control Shift&lt;/Modifiers&gt;
-          &lt;/HotKey&gt;
-        </Value>
+        &lt;HotKey xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+        &lt;Key&gt;D4&lt;/Key&gt;
+        &lt;Modifiers&gt;Control Shift&lt;/Modifiers&gt;
+        &lt;/HotKey&gt;
+      </Value>
     </Setting>
   </Settings>
 </SettingsFile>

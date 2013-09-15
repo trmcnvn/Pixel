@@ -10,33 +10,40 @@ using Pixel.Models;
 using Pixel.Properties;
 using TaskDialogInterop;
 
-namespace Pixel {
+namespace Pixel
+{
   /// <summary>
   ///   Interaction logic for App.xaml
   /// </summary>
-  public partial class App {
+  public partial class App
+  {
     private static Mutex _appMutex;
     // TODO: Create our own HotKey class
     public static HotKeyManager HotKeyManager = new HotKeyManager();
     public static UploaderManager UploaderManager = new UploaderManager();
 
-    public static string ApplicationName {
+    public static string ApplicationName
+    {
       get { return "Pixel"; }
     }
 
-    public static string ApplicationVersion {
+    public static string ApplicationVersion
+    {
       get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(3); }
     }
 
-    protected override void OnStartup(StartupEventArgs e) {
+    protected override void OnStartup(StartupEventArgs e)
+    {
       base.OnStartup(e);
 
       // Livet
       DispatcherHelper.UIDispatcher = Dispatcher;
 
       _appMutex = new Mutex(true, "Pixel-7331B770-095A-4220-924E-8C22B14701E5");
-      if (!_appMutex.WaitOne(0, false)) {
-        TaskDialog.Show(new TaskDialogOptions {
+      if (!_appMutex.WaitOne(0, false))
+      {
+        TaskDialog.Show(new TaskDialogOptions
+        {
           Title = ApplicationName,
           MainInstruction = "Application Error",
           Content = string.Format("Sorry, only one instance of {0} may be running at a single time.", ApplicationName),
@@ -50,13 +57,17 @@ namespace Pixel {
       UploaderManager.Initialize(Settings.Default.ImageUploader);
     }
 
-    protected override void OnExit(ExitEventArgs e) {
+    protected override void OnExit(ExitEventArgs e)
+    {
       // Do the registry work for RunOnStartup
       var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-      if (key != null) {
-        if (Settings.Default.RunOnStartup) {
+      if (key != null)
+      {
+        if (Settings.Default.RunOnStartup)
+        {
           key.SetValue(ApplicationName, Assembly.GetExecutingAssembly().Location);
-        } else if (key.GetValueNames().Contains(ApplicationName))
+        }
+        else if (key.GetValueNames().Contains(ApplicationName))
           key.DeleteValue(ApplicationName);
         key.Close();
       }

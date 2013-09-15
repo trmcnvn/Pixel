@@ -2,8 +2,10 @@
 using System.Windows.Input;
 using Livet.Behaviors;
 
-namespace Pixel.Extensions {
-  public class WindowCloseCancelBehaviorEx : WindowCloseCancelBehavior {
+namespace Pixel.Extensions
+{
+  public class WindowCloseCancelBehaviorEx : WindowCloseCancelBehavior
+  {
     // Using a DependencyProperty as the backing store. This enables animation, styling, binding, etc...
     public static readonly DependencyProperty BeforeClosingCommandProperty =
       DependencyProperty.Register("BeforeClosingCommand", typeof(ICommand), typeof(WindowCloseCancelBehaviorEx),
@@ -19,27 +21,34 @@ namespace Pixel.Extensions {
 
     private readonly MethodBinder _beforeClosingMethod = new MethodBinder();
 
-    public ICommand BeforeClosingCommand {
+    public ICommand BeforeClosingCommand
+    {
       get { return (ICommand)GetValue(BeforeClosingCommandProperty); }
       set { SetValue(BeforeClosingCommandProperty, value); }
     }
 
-    public object BeforeClosingMethodTarget {
+    public object BeforeClosingMethodTarget
+    {
       get { return GetValue(BeforeClosingMethodTargetProperty); }
       set { SetValue(BeforeClosingMethodTargetProperty, value); }
     }
 
-    public string BeforeClosingMethodName {
+    public string BeforeClosingMethodName
+    {
       get { return (string)GetValue(BeforeClosingMethodNameProperty); }
       set { SetValue(BeforeClosingMethodNameProperty, value); }
     }
 
-    protected override void OnAttached() {
-      AssociatedObject.Closing += (sender, e) => {
-        if (BeforeClosingCommand != null && BeforeClosingCommand.CanExecute(null)) {
+    protected override void OnAttached()
+    {
+      AssociatedObject.Closing += (sender, e) =>
+      {
+        if (BeforeClosingCommand != null && BeforeClosingCommand.CanExecute(null))
+        {
           BeforeClosingCommand.Execute(null);
         }
-        if (BeforeClosingMethodTarget != null && BeforeClosingMethodName != null) {
+        if (BeforeClosingMethodTarget != null && BeforeClosingMethodName != null)
+        {
           _beforeClosingMethod.Invoke(BeforeClosingMethodTarget, BeforeClosingMethodName);
         }
       };

@@ -11,22 +11,27 @@ using Pixel.Properties;
 using Pixel.Views.Messaging;
 using TaskDialogInterop;
 
-namespace Pixel.ViewModels {
-  public class SettingsWindowViewModel : ViewModel {
+namespace Pixel.ViewModels
+{
+  public class SettingsWindowViewModel : ViewModel
+  {
     private ViewModelCommand _buttonApplyCommand;
     private ViewModelCommand _buttonCloseCommand;
     private ListenerCommand<KeyEventArgs> _screenKeyDownCommand;
     private ListenerCommand<KeyEventArgs> _selectionKeyDownCommand;
     private bool _settingsChanged;
 
-    public SettingsWindowViewModel() {
+    public SettingsWindowViewModel()
+    {
       Settings = Properties.Settings.Default.DeepClone();
       CompositeDisposable.Add(new PropertyChangedEventListener((Settings)Settings, (s, e) => SettingsChanged = true));
     }
 
-    public bool SettingsChanged {
+    public bool SettingsChanged
+    {
       get { return _settingsChanged; }
-      set {
+      set
+      {
         if (this.SetIfChanged(ref _settingsChanged, value))
           RaisePropertyChanged(() => SettingsChanged);
       }
@@ -36,12 +41,15 @@ namespace Pixel.ViewModels {
 
     #region Commands
 
-    public ViewModelCommand ButtonApplyCommand {
+    public ViewModelCommand ButtonApplyCommand
+    {
       get { return _buttonApplyCommand ?? (_buttonApplyCommand = new ViewModelCommand(ApplySettings)); }
     }
 
-    public ViewModelCommand ButtonCancelCommand {
-      get {
+    public ViewModelCommand ButtonCancelCommand
+    {
+      get
+      {
         return _buttonCloseCommand ??
                (_buttonCloseCommand =
                  new ViewModelCommand(() => Messenger.Raise(new WindowActionMessage(WindowAction.Close))));
@@ -49,16 +57,20 @@ namespace Pixel.ViewModels {
     }
 
     // TODO: Can we do this in a single command?
-    public ListenerCommand<KeyEventArgs> ScreenKeyUpCommand {
-      get {
+    public ListenerCommand<KeyEventArgs> ScreenKeyUpCommand
+    {
+      get
+      {
         return _screenKeyDownCommand ??
                (_screenKeyDownCommand =
                  new ListenerCommand<KeyEventArgs>(e => ProcessKeyUp("ScreenHotKey", e)));
       }
     }
 
-    public ListenerCommand<KeyEventArgs> SelectionKeyUpCommand {
-      get {
+    public ListenerCommand<KeyEventArgs> SelectionKeyUpCommand
+    {
+      get
+      {
         return _selectionKeyDownCommand ??
                (_selectionKeyDownCommand =
                  new ListenerCommand<KeyEventArgs>(e => ProcessKeyUp("SelectionHotKey", e)));
@@ -67,8 +79,10 @@ namespace Pixel.ViewModels {
 
     #endregion
 
-    private void ProcessKeyUp(string propertyName, KeyEventArgs e) {
-      switch (e.Key) {
+    private void ProcessKeyUp(string propertyName, KeyEventArgs e)
+    {
+      switch (e.Key)
+      {
         case Key.LeftCtrl:
         case Key.RightCtrl:
         case Key.LeftShift:
@@ -89,16 +103,21 @@ namespace Pixel.ViewModels {
       }
     }
 
-    private void ApplySettings() {
+    private void ApplySettings()
+    {
       // Deal with hotkeys
-      try {
+      try
+      {
         App.HotKeyManager.Unregister(Properties.Settings.Default.ScreenHotKey);
         App.HotKeyManager.Unregister(Properties.Settings.Default.SelectionHotKey);
 
         App.HotKeyManager.Register(((Settings)Settings).ScreenHotKey);
         App.HotKeyManager.Register(((Settings)Settings).SelectionHotKey);
-      } catch (Exception e) {
-        Messenger.Raise(new TaskDialogMessage(new TaskDialogOptions {
+      }
+      catch (Exception e)
+      {
+        Messenger.Raise(new TaskDialogMessage(new TaskDialogOptions
+        {
           Title = "Settings",
           MainInstruction = "Application Exception",
           Content = e.Message,
@@ -108,12 +127,14 @@ namespace Pixel.ViewModels {
         return;
       }
 
-      if (!Properties.Settings.Default.ImageUploader.Equals(((Settings)Settings).ImageUploader)) {
+      if (!Properties.Settings.Default.ImageUploader.Equals(((Settings)Settings).ImageUploader))
+      {
         App.UploaderManager.Initialize(((Settings)Settings).ImageUploader);
       }
 
       // Apply the settings to Properties.Settings.Default
-      foreach (var prop in Properties.Settings.Default.Properties) {
+      foreach (var prop in Properties.Settings.Default.Properties)
+      {
         Properties.Settings.Default.GetType()
           .GetProperty(((SettingsProperty)prop).Name)
           .SetValue(Properties.Settings.Default,
