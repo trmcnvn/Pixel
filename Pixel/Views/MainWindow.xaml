@@ -31,7 +31,7 @@
     <Window.Visibility>
         <Binding Path="IsVisible" Mode="OneWay">
             <Binding.Converter>
-                <l:VisibilityAndBooleanConverter ConvertWhenTrue="Visible" ConvertWhenFalse="Hidden"/>
+                <l:VisibilityAndBooleanConverter ConvertWhenTrue="Visible" ConvertWhenFalse="Hidden" />
             </Binding.Converter>
         </Binding>
     </Window.Visibility>
