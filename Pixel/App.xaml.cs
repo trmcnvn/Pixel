@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Runtime;
 using System.Threading;
 using System.Windows;
-using System.Windows.Forms;
 using GlobalHotKey;
 using Microsoft.Win32;
 using NLog;
@@ -15,7 +15,6 @@ using Pixel.Models;
 using Pixel.Views.Converters;
 using ReactiveUI;
 using LogLevel = NLog.LogLevel;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Pixel {
   /// <summary>
@@ -58,7 +57,7 @@ namespace Pixel {
       ProfileOptimization.SetProfileRoot(RoamingPath);
       ProfileOptimization.StartProfile("Pixel.profile");
 
-      // Register converters with ReactiveUI
+      // Register RxUI Stuff
       RxApp.MutableResolver.Register(() => new BooleanToWindowStateConverter(), typeof(IBindingTypeConverter));
 
       // Setup NLog

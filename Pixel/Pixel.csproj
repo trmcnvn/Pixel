@@ -194,6 +194,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\ImageFormats.cs" />
+    <Compile Include="Messages\NotificationMessage.cs" />
     <Compile Include="Models\Uploader.cs" />
     <Compile Include="Models\UserSettings.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -209,7 +210,6 @@
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <AppDesigner Include="Properties\" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
