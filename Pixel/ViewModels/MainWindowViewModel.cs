@@ -1,266 +1,120 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Windows;
 using GlobalHotKey;
 using Hardcodet.Wpf.TaskbarNotification;
-using Livet;
-using Livet.Commands;
-using Livet.EventListeners;
-using Livet.Messaging;
-using Livet.Messaging.IO;
-using Livet.Messaging.Windows;
-using Pixel.Extensions;
+using Pixel.Messages;
 using Pixel.Models;
-using Pixel.Properties;
-using Pixel.Views;
-using Pixel.Views.Messaging;
-using TaskDialogInterop;
-using Clipboard = System.Windows.Forms.Clipboard;
-using DataFormats = System.Windows.Forms.DataFormats;
-using DragEventArgs = System.Windows.DragEventArgs;
+using ReactiveUI;
 
-namespace Pixel.ViewModels
-{
-  public class MainWindowViewModel : ViewModel
-  {
-    private ViewModelCommand _beforeClosingCommand;
-    private bool _canClose;
-    private ViewModelCommand _captureScreenCommand;
-    private ViewModelCommand _captureSelectionCommand;
-    private ListenerCommand<DragEventArgs> _dropCommand;
-    private ViewModelCommand _exitCommand;
-    private bool _isVisibile;
-    private ViewModelCommand _settingsCommand;
-    private ViewModelCommand _uploadCommand;
-    private ViewModelCommand _visibilityCommand;
+namespace Pixel.ViewModels {
+  public class MainWindowViewModel : ReactiveObject {
+    private bool _isCaptureWindowOpen;
 
-    public MainWindowViewModel()
-    {
-      ImageHistory = new ObservableCollection<string>();
-      IsVisible = !Settings.Default.StartMinimized;
+    public string Title {
+      get { return App.ApplicationName; }
     }
 
-    #region Commands
-
-    public ViewModelCommand SettingsCommand
-    {
-      get
-      {
-        return _settingsCommand ??
-               (_settingsCommand =
-                 new ViewModelCommand(() =>
-                 {
-                   var vm = new SettingsWindowViewModel();
-                   Messenger.Raise(new TransitionMessage(typeof(SettingsWindow), vm, TransitionMode.Modal,
-                     "SettingsWindow"));
-                 }));
-      }
+    public bool IsTopmost {
+      get { return App.Settings.AlwaysOnTop; }
     }
 
-    public ViewModelCommand UploadCommand
-    {
-      get { return _uploadCommand ?? (_uploadCommand = new ViewModelCommand(Upload)); }
+    public bool IsVisible { get; set; }
+
+    public ReactiveList<string> ImageHistory { get; private set; }
+
+    public ReactiveCommand VisiblityCommand { get; private set; }
+
+    public ReactiveCommand DropCommand { get; private set; }
+
+    public ReactiveCommand UploadCommand { get; private set; }
+
+    public ReactiveCommand ScreenCommand { get; private set; }
+
+    public ReactiveCommand SelectionCommand { get; private set; }
+
+    public ReactiveCommand OpenCommand { get; private set; }
+
+    public ReactiveCommand SettingsCommand { get; private set; }
+
+    public bool IsCaptureWindowOpen {
+      get { return _isCaptureWindowOpen; }
+      set { this.RaiseAndSetIfChanged(ref _isCaptureWindowOpen, value); }
     }
 
-    public ViewModelCommand ExitCommand
-    {
-      get
-      {
-        return _exitCommand ??
-               (_exitCommand =
-                 new ViewModelCommand(() => Messenger.Raise(new WindowActionMessage(WindowAction.Close))));
-      }
-    }
+    public MainWindowViewModel() {
+      ImageHistory = new ReactiveList<string>();
+      IsVisible = !App.Settings.StartMinimized;
+      VisiblityCommand = new ReactiveCommand();
+      DropCommand = new ReactiveCommand();
+      SettingsCommand = new ReactiveCommand();
+      UploadCommand = new ReactiveCommand();
+      ScreenCommand = new ReactiveCommand();
+      SelectionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsCaptureWindowOpen).Select(x => !x));
+      SelectionCommand.Subscribe(_ => IsCaptureWindowOpen = true);
 
-    public ViewModelCommand VisibilityCommand
-    {
-      get
-      {
-        return _visibilityCommand ??
-               (_visibilityCommand =
-                 new ViewModelCommand(() => { IsVisible = !IsVisible; }));
-      }
-    }
-
-    public ViewModelCommand BeforeClosingCommand
-    {
-      get { return _beforeClosingCommand ?? (_beforeClosingCommand = new ViewModelCommand(RequestClose)); }
-    }
-
-    public ViewModelCommand CaptureScreenCommand
-    {
-      get { return _captureScreenCommand ?? (_captureScreenCommand = new ViewModelCommand(Capture)); }
-    }
-
-    public ViewModelCommand CaptureSelectionCommand
-    {
-      get
-      {
-        return _captureSelectionCommand ?? (_captureSelectionCommand = new ViewModelCommand(() =>
-        {
-          var vm = new CaptureWindowViewModel();
-          Messenger.Raise(new TransitionMessage(typeof(CaptureWindow), vm, TransitionMode.Normal, "CaptureWindow"));
-        }));
-      }
-    }
-
-    public ListenerCommand<DragEventArgs> DropCommand
-    {
-      get
-      {
-        return _dropCommand ??
-               (_dropCommand = new ListenerCommand<DragEventArgs>(e =>
-               {
-                 if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
-                 var data = (string[])e.Data.GetData(DataFormats.FileDrop);
-                 foreach (var file in data)
-                 {
-                   App.UploaderManager.ActiveUploader.Upload(file);
-                 }
-               }));
-      }
-    }
-
-    #endregion
-
-    public bool IsVisible
-    {
-      get { return _isVisibile; }
-      set
-      {
-        if (this.SetIfChanged(ref _isVisibile, value))
-          RaisePropertyChanged(() => IsVisible);
-      }
-    }
-
-    public string Title
-    {
-      get { return string.Format("{0} - {1}", App.ApplicationName, App.ApplicationVersion); }
-    }
-
-    public bool CanClose
-    {
-      get { return _canClose; }
-      set
-      {
-        if (this.SetIfChanged(ref _canClose, value))
-          RaisePropertyChanged(() => CanClose);
-      }
-    }
-
-    public ObservableCollection<string> ImageHistory { get; private set; }
-
-    public void Initialize()
-    {
-      try
-      {
-        App.HotKeyManager.Register(Settings.Default.ScreenHotKey);
-        App.HotKeyManager.Register(Settings.Default.SelectionHotKey);
-
-        CompositeDisposable.Add(
-          new EventListener<EventHandler<KeyPressedEventArgs>>(handler => App.HotKeyManager.KeyPressed += handler,
-            handler => App.HotKeyManager.KeyPressed -= handler, OnHotKeyPressed));
-        CompositeDisposable.Add(
-          new EventListener<EventHandler<UploaderEventArgs>>(
-            handler => App.UploaderManager.ActiveUploader.ImageUploaded += handler,
-            handler => App.UploaderManager.ActiveUploader.ImageUploaded -= handler, OnImageUploaded));
-      }
-      catch (Exception e)
-      {
-        Messenger.Raise(new TaskDialogMessage(new TaskDialogOptions
-        {
-          Title = Title,
-          MainInstruction = "Application Exception",
-          Content = "An exception has occurred and the application may not function correctly.",
-          ExpandedInfo = e.Message,
-          MainIcon = VistaTaskDialogIcon.Error,
-          CommonButtons = TaskDialogCommonButtons.Close
-        }));
-      }
-    }
-
-    private void RequestClose()
-    {
-      if (Settings.Default.ConfirmOnClose)
-      {
-        var rep = Messenger.GetResponse(new TaskDialogMessage(new TaskDialogOptions
-        {
-          Title = Title,
-          MainInstruction = "Closing Application",
-          Content = "Are you sure you want to exit?",
-          VerificationText = "Don't show me this message again",
-          MainIcon = VistaTaskDialogIcon.Information,
-          CommonButtons = TaskDialogCommonButtons.YesNo
-        }));
-
-        CanClose = rep.Response != null && rep.Response.Result != TaskDialogSimpleResult.No;
-        if (rep.Response != null && rep.Response.VerificationChecked != null)
-          Settings.Default.ConfirmOnClose = !rep.Response.VerificationChecked.Value;
-      }
-      else
-      {
-        CanClose = true;
-      }
-    }
-
-    private void OnHotKeyPressed(object sender, KeyPressedEventArgs e)
-    {
-      var hk = e.HotKey;
-      if (hk.Equals(Settings.Default.ScreenHotKey))
-      {
-        Capture();
-      }
-      else if (hk.Equals(Settings.Default.SelectionHotKey))
-      {
-        CaptureSelectionCommand.Execute();
-      }
-    }
-
-
-    private void OnImageUploaded(object sender, UploaderEventArgs e)
-    {
-      if (e.State != UploaderState.Success)
-      {
-        if (Settings.Default.Popups)
-        {
-          Messenger.Raise(new BalloonTipMessage(Title, "Image failed to upload.", BalloonIcon.Info));
+      DropCommand.Subscribe(async ev => {
+        var e = ev as DragEventArgs;
+        if (e == null) {
+          return;
         }
-        return;
-      }
-      if (Settings.Default.CopyLinks)
-      {
-        Clipboard.SetText(e.ImageUrl.ToString());
-      }
-      ImageHistory.Add(e.ImageUrl.ToString());
-      if (!Settings.Default.Popups) return;
-      var msg = string.Format("Image uploaded: {0}", e.ImageUrl);
-      Messenger.Raise(new BalloonTipMessage(Title, msg, BalloonIcon.Info));
-    }
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+          return;
+        }
+        var data = e.Data.GetData(DataFormats.FileDrop) as IEnumerable<string>;
+        if (data == null) {
+          return;
+        }
+        foreach (var file in data) {
+          await App.Uploader.Upload(file);
+        }
+      });
 
-    private void Upload()
-    {
-      var msg = new OpeningFileSelectionMessage
-      {
-        Title = "Upload Images",
-        Filter = "Image files (*.jpg, *.gif, *.png, *.bmp, *.tiff, *.pdf)|*.jpg;*.gif;*.png;*.bmp;*.tiff;*.pdf",
-        MultiSelect = true
-      };
-      var rep = Messenger.GetResponse(msg);
-      if (rep.Response == null) return;
-      foreach (var file in rep.Response)
-      {
-        App.UploaderManager.ActiveUploader.Upload(file);
-      }
-    }
+      OpenCommand = new ReactiveCommand();
+      OpenCommand.Subscribe(async files => {
+        foreach (var file in (IEnumerable<string>)files) {
+          await App.Uploader.Upload(file);
+        }
+      });
 
-    private void Capture()
-    {
-      var rep =
-        Messenger.GetResponse(new CaptureScreenMessage(Screen.PrimaryScreen.Bounds.Width,
-          Screen.PrimaryScreen.Bounds.Height, Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y));
-      if (rep.Response == null) return;
-      var vm = new PreviewWindowViewModel(rep.Response);
-      Messenger.Raise(new TransitionMessage(typeof(PreviewWindow), vm, TransitionMode.Normal, "PreviewWindow"));
+      MessageBus.Current.Listen<object>("CaptureWindow").Subscribe(_ => IsCaptureWindowOpen = false);
+
+      Observable.FromEventPattern<KeyPressedEventArgs>(handler => App.HotKeyManager.KeyPressed += handler,
+        handler => App.HotKeyManager.KeyPressed -= handler).Select(x => x.EventArgs).Subscribe(e => {
+          var hk = e.HotKey;
+          if (hk.Equals(App.Settings.ScreenKey)) {
+            ScreenCommand.Execute(null);
+          } else if (hk.Equals(App.Settings.SelectionKey)) {
+            if (SelectionCommand.CanExecute(null)) {
+              SelectionCommand.Execute(null);
+            }
+          }
+        });
+
+      Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadSuccess += handler,
+        handler => App.Uploader.ImageUploadSuccess -= handler).Select(x => x.EventArgs).Subscribe(e => {
+          if (App.Settings.CopyLinks) {
+            Clipboard.SetText(e.ImageUrl);
+          }
+          ImageHistory.Add(e.ImageUrl);
+          if (!App.Settings.Notifications) {
+            return;
+          }
+          var msg = string.Format("Image Uploaded: {0}", e.ImageUrl);
+          MessageBus.Current.SendMessage(new NotificationMessage(Title, msg, BalloonIcon.Info));
+        });
+
+      Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadFailed += handler,
+        handler => App.Uploader.ImageUploadFailed -= handler).Select(x => x.EventArgs).Subscribe(e => {
+          if (!App.Settings.Notifications) {
+            return;
+          }
+          var msg = string.Format("Image Failed: {0}", e.Exception.Message);
+          MessageBus.Current.SendMessage(new NotificationMessage(Title, msg, BalloonIcon.Error));
+        });
+
+      App.Settings.ObservableForProperty(x => x.AlwaysOnTop).Subscribe(_ => this.RaisePropertyChanged("IsTopmost"));
     }
   }
 }
