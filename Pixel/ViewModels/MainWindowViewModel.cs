@@ -10,19 +10,19 @@ using ReactiveUI;
 
 namespace Pixel.ViewModels {
   public class MainWindowViewModel : ReactiveObject {
-    private readonly Uploader _uploader;
     private bool _isVisible;
 
     public MainWindowViewModel() {
       IsVisible = !App.Settings.StartMinimized;
       ImageHistory = new ReactiveList<string>();
-      _uploader = new Uploader();
 
       VisiblityCommand = new ReactiveCommand();
+      DropCommand = new ReactiveCommand();
+      UploadCommand = new ReactiveCommand();
+      ScreenCommand = new ReactiveCommand();
+
       VisiblityCommand.Subscribe(_ => IsVisible = !IsVisible);
 
-      // Drag/Drop Upload
-      DropCommand = new ReactiveCommand();
       DropCommand.Subscribe(async ev => {
         var e = ev as DragEventArgs;
         if (e == null) return;
@@ -30,32 +30,29 @@ namespace Pixel.ViewModels {
         var data = e.Data.GetData(DataFormats.FileDrop) as IEnumerable<string>;
         if (data == null) return;
         foreach (var file in data) {
-          await _uploader.Upload(file);
+          await App.Uploader.Upload(file);
         }
       });
 
-      // File upload
-      UploadCommand = new ReactiveCommand();
-      MessageBus.Current.Listen<IEnumerable<string>>().Subscribe(async files => {
-        foreach (var file in files) {
-          await _uploader.Upload(file);
+      OpenCommand = new ReactiveCommand();
+      OpenCommand.Subscribe(async files => {
+        foreach (var file in (IEnumerable<string>)files) {
+          await App.Uploader.Upload(file);
         }
       });
 
-      // HotKeys
       Observable.FromEventPattern<KeyPressedEventArgs>(handler => App.HotKeyManager.KeyPressed += handler,
         handler => App.HotKeyManager.KeyPressed -= handler).Select(x => x.EventArgs).Subscribe(e => {
           var hk = e.HotKey;
           if (hk.Equals(App.Settings.ScreenKey)) {
-            // 
+            ScreenCommand.Execute(null);
           } else if (hk.Equals(App.Settings.SelectionKey)) {
             //
           }
         });
 
-      // Successful Upload
-      Observable.FromEventPattern<UploaderEventArgs>(handler => _uploader.ImageUploadSuccess += handler,
-        handler => _uploader.ImageUploadSuccess -= handler).Select(x => x.EventArgs)
+      Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadSuccess += handler,
+        handler => App.Uploader.ImageUploadSuccess -= handler).Select(x => x.EventArgs)
         .Subscribe(e => {
           if (App.Settings.CopyLinks) Clipboard.SetText(e.ImageUrl);
           ImageHistory.Add(e.ImageUrl);
@@ -64,13 +61,13 @@ namespace Pixel.ViewModels {
           MessageBus.Current.SendMessage(new NotificationMessage(Title, msg, BalloonIcon.Info));
         });
 
-      // Failed Upload
-      Observable.FromEventPattern<UploaderEventArgs>(handler => _uploader.ImageUploadFailed += handler,
-        handler => _uploader.ImageUploadFailed -= handler).Select(x => x.EventArgs)
+      Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadFailed += handler,
+        handler => App.Uploader.ImageUploadFailed -= handler).Select(x => x.EventArgs)
         .Subscribe(e => {
           if (!App.Settings.Notifications) return;
           LogHost.Default.ErrorException("Failed to upload image", e.Exception);
-          MessageBus.Current.SendMessage(new NotificationMessage(Title, "Upload Failed: See Debug.log for details",
+          var msg = string.Format("Image Failed: {0}", e.Exception.Message);
+          MessageBus.Current.SendMessage(new NotificationMessage(Title, msg,
             BalloonIcon.Error));
         });
 
@@ -95,5 +92,7 @@ namespace Pixel.ViewModels {
     public ReactiveCommand VisiblityCommand { get; private set; }
     public ReactiveCommand DropCommand { get; private set; }
     public ReactiveCommand UploadCommand { get; private set; }
+    public ReactiveCommand ScreenCommand { get; private set; }
+    public ReactiveCommand OpenCommand { get; private set; }
   }
 }

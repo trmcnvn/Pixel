@@ -1,0 +1,31 @@
+﻿<Window x:Class="Pixel.Views.PreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Preview Image" Height="600" Width="800" Icon="{StaticResource AppIcon}">
+    <Window.InputBindings>
+        <KeyBinding x:Name="EscapeKey" Key="Escape" />
+        <KeyBinding x:Name="SaveKey" Modifiers="Control" Key="S" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem x:Name="MenuSave" Header="Save..." />
+                <Separator />
+                <MenuItem x:Name="MenuClose" Header="Close" />
+            </MenuItem>
+        </Menu>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <Image x:Name="Image" Stretch="None" />
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+            <Button x:Name="ButtonUpload" Content="Upload" Width="100" Height="24" Margin="0,0,5,0" />
+            <Button x:Name="ButtonCancel" Content="Cancel" Width="100" Height="24" IsCancel="True" IsDefault="True" />
+        </StackPanel>
+    </Grid>
+</Window>

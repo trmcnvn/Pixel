@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Controls;
-using Microsoft.Win32;
+using System.Windows.Forms;
+using Pixel.Helpers;
 using Pixel.Messages;
 using Pixel.ViewModels;
+using Pixel.Views.Converters;
 using ReactiveUI;
 using ReactiveUI.Xaml;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace Pixel.Views {
   /// <summary>
@@ -17,11 +19,10 @@ namespace Pixel.Views {
       InitializeComponent();
       ViewModel = new MainWindowViewModel();
 
-      // Hide application in the system tray when minimized
-      this.Bind(ViewModel, x => x.IsVisible, x => x.WindowState);
+      this.Bind(ViewModel, x => x.IsVisible, x => x.WindowState, null, new BooleanToWindowStateConverter(),
+        new BooleanToWindowStateConverter());
       this.OneWayBind(ViewModel, x => x.IsVisible, x => x.Visibility, () => true, BooleanToVisibilityHint.UseHidden);
 
-      // Binds
       this.OneWayBind(ViewModel, x => x.Title, x => x.Title);
       this.OneWayBind(ViewModel, x => x.IsTopmost, x => x.Topmost);
       this.OneWayBind(ViewModel, x => x.IsVisible, x => x.ShowInTaskbar);
@@ -31,8 +32,8 @@ namespace Pixel.Views {
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.MenuUpload);
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.TrayUpload);
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.ButtonBrowse);
+      this.BindCommand(ViewModel, x => x.ScreenCommand, x => x.ButtonScreen);
 
-      // Commands
       this.WhenAnyObservable(x => x.ViewModel.UploadCommand).Subscribe(_ => {
         var dialog = new OpenFileDialog {
           InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
@@ -41,20 +42,28 @@ namespace Pixel.Views {
           Multiselect = true
         };
         dialog.ShowDialog();
-        MessageBus.Current.SendMessage<IEnumerable<string>>(dialog.FileNames);
+        ViewModel.OpenCommand.Execute(dialog.FileNames);
       });
 
-      // Messages
-      MessageBus.Current.Listen<NotificationMessage>()
-        .Subscribe(e => TaskbarIcon.ShowBalloonTip(e.Title, e.Text, e.Icon));
+      this.WhenAnyObservable(x => x.ViewModel.ScreenCommand)
+        .Subscribe(async _ => {
+          var file = await CaptureScreen.Capture(Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y,
+            Screen.PrimaryScreen.Bounds.Width,
+            Screen.PrimaryScreen.Bounds.Height);
 
-      // Events
+          var previewWindow = new PreviewWindow(file) { Owner = this };
+          previewWindow.Show();
+        });
+
       TrayShow.Events().Click.Subscribe(_ => ViewModel.VisiblityCommand.Execute(null));
       TrayExit.Events().Click.Subscribe(_ => Close());
       MenuExit.Events().Click.Subscribe(_ => Close());
       MenuWebsite.Events().Click.Subscribe(_ => Process.Start("https://github.com/vevix/Pixel"));
       HistoryList.Events().MouseDoubleClick.Subscribe(_ => Process.Start(HistoryList.SelectedValue.ToString()));
       Dropbox.Events().Drop.Subscribe(e => ViewModel.DropCommand.Execute(e));
+
+      MessageBus.Current.Listen<NotificationMessage>()
+        .Subscribe(e => TaskbarIcon.ShowBalloonTip(e.Title, e.Text, e.Icon));
     }
 
     #region IViewFor<MainWindowViewModel> Members

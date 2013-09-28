@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Runtime;
 using System.Threading;
@@ -11,8 +10,8 @@ using Microsoft.Win32;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using Pixel.Helpers;
 using Pixel.Models;
-using Pixel.Views.Converters;
 using ReactiveUI;
 using LogLevel = NLog.LogLevel;
 
@@ -29,6 +28,7 @@ namespace Pixel {
     }
 
     public static UserSettings Settings { get; private set; }
+    public static Uploader Uploader { get; private set; }
 
     public static string RoamingPath {
       get {
@@ -57,9 +57,6 @@ namespace Pixel {
       ProfileOptimization.SetProfileRoot(RoamingPath);
       ProfileOptimization.StartProfile("Pixel.profile");
 
-      // Register RxUI Stuff
-      RxApp.MutableResolver.Register(() => new BooleanToWindowStateConverter(), typeof(IBindingTypeConverter));
-
       // Setup NLog
       var config = new LoggingConfiguration();
       var fileTarget = new FileTarget();
@@ -77,7 +74,7 @@ namespace Pixel {
       LogManager.Configuration = config;
       LogHost.Default.Level = ReactiveUI.LogLevel.Debug;
 
-      // Load settings from disk
+      Uploader = new Uploader();
       Settings = UserSettings.Load();
 
       // Register hotkeys
@@ -91,8 +88,6 @@ namespace Pixel {
     }
 
     protected override void OnExit(ExitEventArgs e) {
-      // fuck ClickOnce, no way to clear this on uninstall
-      // WTB Shimmer
       var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
       if (key != null) {
         if (Settings.RunOnStartup) {
@@ -100,6 +95,10 @@ namespace Pixel {
         } else if (key.GetValueNames().Contains(ApplicationName))
           key.DeleteValue(ApplicationName);
         key.Close();
+      }
+
+      foreach (var file in TempFile.Files) {
+        File.Delete(file);
       }
 
       Settings.Save();

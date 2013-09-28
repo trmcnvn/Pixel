@@ -10,9 +10,7 @@ namespace Pixel.Views.Converters {
     #region IBindingTypeConverter Members
 
     public int GetAffinityForObjects(Type lhs, Type rhs) {
-      if (lhs == typeof(bool) && rhs == typeof(WindowState)) return 2;
-      if (lhs == typeof(WindowState) && rhs == typeof(bool)) return 2;
-      return 0;
+      throw new NotImplementedException();
     }
 
     public bool TryConvert(object @from, Type toType, object conversionHint, out object result) {
