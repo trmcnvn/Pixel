@@ -1,10 +1,6 @@
 # Pixel
 
-Pixel provides you with an easy to use interface and takes advantage of system-wide hotkeys to take screenshots and upload them.
-
-## Currently Supports
-
-  * Imgur
+The easiest way to capture and upload screenshots to the web on Windows.
 
 ## Install
 
@@ -14,7 +10,7 @@ Download the installer [here](https://s3-ap-southeast-2.amazonaws.com/vevix/pixe
 
 The MIT License (MIT)
 
-Copyright (c) 2013 vevix
+Copyright (c) 2013 Thomas McNiven
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
