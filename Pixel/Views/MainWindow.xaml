@@ -42,7 +42,7 @@
                     <TextBlock Text="You may also drag and drop images here to upload them." FontSize="10" />
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                         <Button x:Name="ButtonScreen" Content="Screenshot" Width="100" Height="24" Margin="0,0,5,0" />
-                        <Button Content="Selection" Width="100" Height="24" Margin="0,0,5,0" />
+                        <Button x:Name="ButtonSelection" Content="Selection" Width="100" Height="24" Margin="0,0,5,0" />
                         <Button x:Name="ButtonBrowse" Content="Browse" Width="100" Height="24" />
                     </StackPanel>
                 </StackPanel>

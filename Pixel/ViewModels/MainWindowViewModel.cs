@@ -10,6 +10,7 @@ using ReactiveUI;
 
 namespace Pixel.ViewModels {
   public class MainWindowViewModel : ReactiveObject {
+    private bool _isCaptureWindowOpen;
     private bool _isVisible;
 
     public MainWindowViewModel() {
@@ -20,7 +21,8 @@ namespace Pixel.ViewModels {
       DropCommand = new ReactiveCommand();
       UploadCommand = new ReactiveCommand();
       ScreenCommand = new ReactiveCommand();
-
+      SelectionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsCaptureWindowOpen).Select(x => !x));
+      SelectionCommand.Subscribe(_ => IsCaptureWindowOpen = true);
       VisiblityCommand.Subscribe(_ => IsVisible = !IsVisible);
 
       DropCommand.Subscribe(async ev => {
@@ -41,13 +43,17 @@ namespace Pixel.ViewModels {
         }
       });
 
+      MessageBus.Current.Listen<object>("CaptureWindow").Subscribe(_ => IsCaptureWindowOpen = false);
+
       Observable.FromEventPattern<KeyPressedEventArgs>(handler => App.HotKeyManager.KeyPressed += handler,
         handler => App.HotKeyManager.KeyPressed -= handler).Select(x => x.EventArgs).Subscribe(e => {
           var hk = e.HotKey;
           if (hk.Equals(App.Settings.ScreenKey)) {
             ScreenCommand.Execute(null);
           } else if (hk.Equals(App.Settings.SelectionKey)) {
-            //
+            if (SelectionCommand.CanExecute(null)) {
+              SelectionCommand.Execute(null);
+            }
           }
         });
 
@@ -93,6 +99,12 @@ namespace Pixel.ViewModels {
     public ReactiveCommand DropCommand { get; private set; }
     public ReactiveCommand UploadCommand { get; private set; }
     public ReactiveCommand ScreenCommand { get; private set; }
+    public ReactiveCommand SelectionCommand { get; private set; }
     public ReactiveCommand OpenCommand { get; private set; }
+
+    public bool IsCaptureWindowOpen {
+      get { return _isCaptureWindowOpen; }
+      set { this.RaiseAndSetIfChanged(ref _isCaptureWindowOpen, value); }
+    }
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using Pixel.Helpers;
@@ -33,6 +34,7 @@ namespace Pixel.Views {
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.TrayUpload);
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.ButtonBrowse);
       this.BindCommand(ViewModel, x => x.ScreenCommand, x => x.ButtonScreen);
+      this.BindCommand(ViewModel, x => x.SelectionCommand, x => x.ButtonSelection);
 
       this.WhenAnyObservable(x => x.ViewModel.UploadCommand).Subscribe(_ => {
         var dialog = new OpenFileDialog {
@@ -54,6 +56,11 @@ namespace Pixel.Views {
           var previewWindow = new PreviewWindow(file) { Owner = this };
           previewWindow.Show();
         });
+
+      this.WhenAnyObservable(x => x.ViewModel.SelectionCommand).Subscribe(_ => {
+        var captureWindow = new CaptureWindow { Owner = this };
+        captureWindow.Show();
+      });
 
       TrayShow.Events().Click.Subscribe(_ => ViewModel.VisiblityCommand.Execute(null));
       TrayExit.Events().Click.Subscribe(_ => Close());
