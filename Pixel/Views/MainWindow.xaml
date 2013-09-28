@@ -1,137 +1,61 @@
 ﻿<Window x:Name="MainWindowView" x:Class="Pixel.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Pixel.ViewModels"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        xmlns:ext="clr-namespace:Pixel.Extensions"
-        xmlns:behaviors="clr-namespace:Pixel.Views.Messaging.Behaviors"
-        xmlns:properties="clr-namespace:Pixel.Properties"
         xmlns:taskbarNotification="http://www.hardcodet.net/taskbar"
-        xmlns:b="clr-namespace:Pixel.Views.Behaviors"
-        Title="{Binding Title}" Height="300" Width="360" Icon="{StaticResource AppIcon}"
-        WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" ShowInTaskbar="{Binding IsVisible}"
-        Topmost="{Binding AlwaysOnTop, Source={x:Static properties:Settings.Default}}" AllowDrop="True">
-    <Window.DataContext>
-        <vm:MainWindowViewModel />
-    </Window.DataContext>
-    <Window.WindowState>
-        <Binding Path="IsVisible">
-            <Binding.Converter>
-                <l:WindowStateAndBooleanConverter
-                    ConvertWhenTrue="Normal"
-                    ConvertWhenFalse="Minimized"
-                    ConvertBackWhenNormal="True"
-                    ConvertBackWhenMinimized="False"
-                    ConvertBackDefaultBooleanValue="True" />
-            </Binding.Converter>
-        </Binding>
-    </Window.WindowState>
-    <Window.Visibility>
-        <Binding Path="IsVisible" Mode="OneWay">
-            <Binding.Converter>
-                <l:VisibilityAndBooleanConverter ConvertWhenTrue="Visible" ConvertWhenFalse="Hidden"/>
-            </Binding.Converter>
-        </Binding>
-    </Window.Visibility>
-    <i:Interaction.Triggers>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <behaviors:TaskDialogInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <behaviors:CaptureScreenInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="SettingsWindow">
-            <l:TransitionInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="CaptureWindow">
-            <l:TransitionInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}" MessageKey="PreviewWindow">
-            <l:TransitionInteractionMessageAction IsOwned="False" />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <l:WindowInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <l:OpenFileDialogInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <behaviors:BalloonTipInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <i:EventTrigger EventName="ContentRendered">
-            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Closed">
-            <l:DataContextDisposeAction />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    <i:Interaction.Behaviors>
-        <ext:WindowCloseCancelBehaviorEx CanClose="{Binding CanClose}"
-                                         BeforeClosingCommand="{Binding BeforeClosingCommand}" />
-    </i:Interaction.Behaviors>
+        Height="300" Width="360" Icon="{StaticResource AppIcon}"
+        WindowStartupLocation="CenterScreen" AllowDrop="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <taskbarNotification:TaskbarIcon x:Name="TaskbarIcon" IconSource="..\Resources\pixel.ico"
-                                         ToolTipText="{Binding Title}"
-                                         DoubleClickCommand="{Binding VisibilityCommand}">
+        <!-- System Tray -->
+        <!-- TODO: Fork this and allow IconSource to take in AppIcon -->
+        <taskbarNotification:TaskbarIcon x:Name="TaskbarIcon" IconSource="..\Resources\pixel.ico">
             <taskbarNotification:TaskbarIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Show/Hide Pixel" Command="{Binding VisibilityCommand}" />
-                    <MenuItem Header="Upload..." Command="{Binding UploadCommand}" />
-                    <MenuItem Header="Settings..." Command="{Binding SettingsCommand}" />
+                    <MenuItem x:Name="TrayShow" Header="Show Pixel" />
+                    <MenuItem x:Name="TrayUpload" Header="Upload..." />
+                    <MenuItem x:Name="TraySettings" Header="Settings..." />
                     <Separator />
-                    <MenuItem Header="Exit Pixel" Command="{Binding ExitCommand}" />
+                    <MenuItem x:Name="TrayExit" Header="Exit Pixel" />
                 </ContextMenu>
             </taskbarNotification:TaskbarIcon.ContextMenu>
         </taskbarNotification:TaskbarIcon>
+        <!-- Icon -->
         <DockPanel Grid.Row="0">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
-                    <MenuItem Header="Upload..." Command="{Binding UploadCommand}" />
-                    <MenuItem Header="Settings..." Command="{Binding SettingsCommand}" />
+                    <MenuItem x:Name="MenuUpload" Header="Upload..." />
+                    <MenuItem x:Name="MenuSettings" Header="Settings..." />
                     <Separator />
-                    <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                    <MenuItem x:Name="MenuExit" Header="Exit" />
                 </MenuItem>
                 <MenuItem Header="Help">
-                    <MenuItem Header="Pixel Website">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <ei:LaunchUriOrFileAction Path="https://github.com/vevix/Pixel" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
+                    <MenuItem x:Name="MenuWebsite" Header="Website..." />
                 </MenuItem>
             </Menu>
         </DockPanel>
         <StackPanel Grid.Row="1" Margin="5">
-            <GroupBox Header="Upload Images">
+            <GroupBox x:Name="Dropbox" Header="Upload Images">
                 <StackPanel Margin="5" HorizontalAlignment="Center">
                     <TextBlock Text="You may also drag and drop images here to upload them." FontSize="10" />
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                        <Button Content="Screenshot" Width="100" Height="24" Margin="0,0,5,0"
-                                Command="{Binding CaptureScreenCommand}" />
-                        <Button Content="Selection" Width="100" Height="24" Margin="0,0,5,0"
-                                Command="{Binding CaptureSelectionCommand}" />
-                        <Button Content="Browse" Width="100" Height="24" Command="{Binding UploadCommand}" />
+                        <Button x:Name="ButtonScreen" Content="Screenshot" Width="100" Height="24" Margin="0,0,5,0" />
+                        <Button x:Name="ButtonSelection" Content="Selection" Width="100" Height="24" Margin="0,0,5,0" />
+                        <Button x:Name="ButtonBrowse" Content="Browse" Width="100" Height="24" />
                     </StackPanel>
                 </StackPanel>
-                <i:Interaction.Behaviors>
-                    <b:DropBehavior DropCommand="{Binding DropCommand}" />
-                </i:Interaction.Behaviors>
             </GroupBox>
             <GroupBox Header="Image History">
                 <StackPanel Margin="5">
-                    <ListBox x:Name="HistoryList" ItemsSource="{Binding ImageHistory}" MaxHeight="100">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <ei:LaunchUriOrFileAction Path="{Binding ElementName=HistoryList, Path=SelectedValue}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
+                    <ListBox x:Name="HistoryList" MaxHeight="100">
+                        <!-- What the fuck RxUI, don't inject useless shit -->
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
             </GroupBox>

@@ -1,78 +1,87 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Threading;
 using System.Windows;
 using GlobalHotKey;
-using Livet;
 using Microsoft.Win32;
+using Pixel.Helpers;
 using Pixel.Models;
-using Pixel.Properties;
-using TaskDialogInterop;
 
-namespace Pixel
-{
+namespace Pixel {
   /// <summary>
   ///   Interaction logic for App.xaml
   /// </summary>
-  public partial class App
-  {
+  public partial class App {
     private static Mutex _appMutex;
-    // TODO: Create our own HotKey class
     public static HotKeyManager HotKeyManager = new HotKeyManager();
-    public static UploaderManager UploaderManager = new UploaderManager();
 
-    public static string ApplicationName
-    {
+    public static string ApplicationName {
       get { return "Pixel"; }
     }
 
-    public static string ApplicationVersion
-    {
-      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(3); }
+    public static UserSettings Settings { get; private set; }
+
+    public static Uploader Uploader { get; private set; }
+
+    public static string RoamingPath {
+      get {
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationName);
+      }
     }
 
-    protected override void OnStartup(StartupEventArgs e)
-    {
+    public static string SettingsPath {
+      get { return Path.Combine(RoamingPath, "Pixel.config"); }
+    }
+
+    protected override void OnStartup(StartupEventArgs e) {
       base.OnStartup(e);
 
-      // Livet
-      DispatcherHelper.UIDispatcher = Dispatcher;
-
       _appMutex = new Mutex(true, "Pixel-7331B770-095A-4220-924E-8C22B14701E5");
-      if (!_appMutex.WaitOne(0, false))
-      {
-        TaskDialog.Show(new TaskDialogOptions
-        {
-          Title = ApplicationName,
-          MainInstruction = "Application Error",
-          Content = string.Format("Sorry, only one instance of {0} may be running at a single time.", ApplicationName),
-          MainIcon = VistaTaskDialogIcon.Error,
-          CommonButtons = TaskDialogCommonButtons.Close
-        });
+      if (!_appMutex.WaitOne(0, false)) {
+        MessageBox.Show(
+          string.Format("Sorry, only one instance of {0} may be running at a single time.", ApplicationName),
+          ApplicationName, MessageBoxButton.OK, MessageBoxImage.Information);
         Environment.Exit(0);
       }
 
-      UploaderManager.LoadUploaders();
-      UploaderManager.Initialize(Settings.Default.ImageUploader);
+      if (!Directory.Exists(RoamingPath)) {
+        Directory.CreateDirectory(RoamingPath);
+      }
+
+      ProfileOptimization.SetProfileRoot(RoamingPath);
+      ProfileOptimization.StartProfile("Pixel.profile");
+
+      Uploader = new Uploader();
+      Settings = UserSettings.Load();
+
+      // Register hotkeys
+      try {
+        HotKeyManager.Register(Settings.ScreenKey);
+        HotKeyManager.Register(Settings.SelectionKey);
+      } catch (Exception ex) {
+        MessageBox.Show(ex.Message, "Exception");
+      }
     }
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-      // Do the registry work for RunOnStartup
+    protected override void OnExit(ExitEventArgs e) {
       var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-      if (key != null)
-      {
-        if (Settings.Default.RunOnStartup)
-        {
+      if (key != null) {
+        if (Settings.RunOnStartup) {
           key.SetValue(ApplicationName, Assembly.GetExecutingAssembly().Location);
-        }
-        else if (key.GetValueNames().Contains(ApplicationName))
+        } else if (key.GetValueNames().Contains(ApplicationName)) {
           key.DeleteValue(ApplicationName);
+        }
         key.Close();
       }
 
-      Settings.Default.Save();
+      foreach (var file in TempFile.Files) {
+        File.Delete(file);
+      }
+
+      Settings.Save();
       base.OnExit(e);
     }
   }

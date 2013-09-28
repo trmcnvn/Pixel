@@ -1,27 +1,11 @@
 ﻿<Window x:Class="Pixel.Views.PreviewWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         Title="Preview Image" Height="600" Width="800" Icon="{StaticResource AppIcon}">
     <Window.InputBindings>
-        <KeyBinding Key="Escape" Command="{Binding ExitCommand}" />
+        <KeyBinding x:Name="EscapeKey" Key="Escape" />
+        <KeyBinding x:Name="SaveKey" Modifiers="Control" Key="S" />
     </Window.InputBindings>
-    <i:Interaction.Triggers>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <l:SaveFileDialogInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger Messenger="{Binding Messenger}">
-            <l:WindowInteractionMessageAction />
-        </l:InteractionMessageTrigger>
-        <i:EventTrigger EventName="Closed">
-            <l:DataContextDisposeAction />
-        </i:EventTrigger>
-        <ei:KeyTrigger Modifiers="Control" Key="S">
-            <i:InvokeCommandAction Command="{Binding SaveCommand}" />
-        </ei:KeyTrigger>
-    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -30,19 +14,18 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="Save..." Command="{Binding SaveCommand}" />
+                <MenuItem x:Name="MenuSave" Header="Save..." />
                 <Separator />
-                <MenuItem Header="Close" Command="{Binding ExitCommand}" />
+                <MenuItem x:Name="MenuClose" Header="Close" />
             </MenuItem>
         </Menu>
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
-            <Image Source="{Binding ImagePath}" Stretch="None" />
+            <Image x:Name="Image" Stretch="None" />
         </ScrollViewer>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="Upload" Width="100" Height="24" Margin="0,0,5,0" Command="{Binding UploadCommand}" />
-            <Button Content="Cancel" Width="100" Height="24" IsCancel="True" IsDefault="True"
-                    Command="{Binding ExitCommand}" />
+            <Button x:Name="ButtonUpload" Content="Upload" Width="100" Height="24" Margin="0,0,5,0" />
+            <Button x:Name="ButtonCancel" Content="Cancel" Width="100" Height="24" IsCancel="True" IsDefault="True" />
         </StackPanel>
     </Grid>
 </Window>

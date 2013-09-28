@@ -1,148 +1,63 @@
 ﻿using System;
-using System.Configuration;
-using System.Windows.Input;
 using GlobalHotKey;
-using Livet;
-using Livet.Commands;
-using Livet.EventListeners;
-using Livet.Messaging.Windows;
-using Pixel.Extensions;
-using Pixel.Properties;
-using Pixel.Views.Messaging;
-using TaskDialogInterop;
+using Pixel.Models;
+using ReactiveUI;
 
-namespace Pixel.ViewModels
-{
-  public class SettingsWindowViewModel : ViewModel
-  {
-    private ViewModelCommand _buttonApplyCommand;
-    private ViewModelCommand _buttonCloseCommand;
-    private ListenerCommand<KeyEventArgs> _screenKeyDownCommand;
-    private ListenerCommand<KeyEventArgs> _selectionKeyDownCommand;
-    private bool _settingsChanged;
+namespace Pixel.ViewModels {
+  public class SettingsWindowViewModel : ReactiveObject {
+    public ReactiveCommand CloseCommand { get; private set; }
 
-    public SettingsWindowViewModel()
-    {
-      Settings = Properties.Settings.Default.DeepClone();
-      CompositeDisposable.Add(new PropertyChangedEventListener((Settings)Settings, (s, e) => SettingsChanged = true));
+    public ReactiveCommand KeyCommand { get; private set; }
+
+    public ReactiveCommand ExceptionCommand { get; private set; }
+
+    public UserSettings Settings {
+      get { return App.Settings; }
     }
 
-    public bool SettingsChanged
-    {
-      get { return _settingsChanged; }
-      set
-      {
-        if (this.SetIfChanged(ref _settingsChanged, value))
-          RaisePropertyChanged(() => SettingsChanged);
-      }
-    }
+    public SettingsWindowViewModel() {
+      CloseCommand = new ReactiveCommand();
+      ExceptionCommand = new ReactiveCommand();
 
-    public object Settings { get; private set; }
+      KeyCommand = new ReactiveCommand();
+      KeyCommand.Subscribe(x => {
+        var tuple = x as Tuple<string, HotKey>;
+        if (tuple.Item2 == null) {
+          return;
+        }
 
-    #region Commands
+        App.HotKeyManager.Unregister(Settings.ScreenKey);
+        App.HotKeyManager.Unregister(Settings.SelectionKey);
 
-    public ViewModelCommand ButtonApplyCommand
-    {
-      get { return _buttonApplyCommand ?? (_buttonApplyCommand = new ViewModelCommand(ApplySettings)); }
-    }
+        var tmpScreenKey = Settings.ScreenKey;
+        var tmpSelectionKey = Settings.SelectionKey;
+        switch (tuple.Item1) {
+          case "ScreenKey":
+            tmpScreenKey = tuple.Item2;
+            break;
+          case "SelectionKey":
+            tmpSelectionKey = tuple.Item2;
+            break;
+        }
 
-    public ViewModelCommand ButtonCancelCommand
-    {
-      get
-      {
-        return _buttonCloseCommand ??
-               (_buttonCloseCommand =
-                 new ViewModelCommand(() => Messenger.Raise(new WindowActionMessage(WindowAction.Close))));
-      }
-    }
+        App.HotKeyManager.Register(tmpScreenKey);
+        App.HotKeyManager.Register(tmpSelectionKey);
 
-    // TODO: Can we do this in a single command?
-    public ListenerCommand<KeyEventArgs> ScreenKeyUpCommand
-    {
-      get
-      {
-        return _screenKeyDownCommand ??
-               (_screenKeyDownCommand =
-                 new ListenerCommand<KeyEventArgs>(e => ProcessKeyUp("ScreenHotKey", e)));
-      }
-    }
+        // Only apply the change if there hasn't been an error registering them
+        Settings.GetType().GetProperty(tuple.Item1).SetValue(Settings, tuple.Item2);
+      });
+      KeyCommand.ThrownExceptions.Subscribe(ex => {
+        // We have to re-register the hotkeys here so
+        // that both are registered with the system
+        App.HotKeyManager.Unregister(Settings.ScreenKey);
+        App.HotKeyManager.Unregister(Settings.SelectionKey);
+        App.HotKeyManager.Register(Settings.ScreenKey);
+        App.HotKeyManager.Register(Settings.SelectionKey);
 
-    public ListenerCommand<KeyEventArgs> SelectionKeyUpCommand
-    {
-      get
-      {
-        return _selectionKeyDownCommand ??
-               (_selectionKeyDownCommand =
-                 new ListenerCommand<KeyEventArgs>(e => ProcessKeyUp("SelectionHotKey", e)));
-      }
-    }
+        ExceptionCommand.Execute(ex);
+      });
 
-    #endregion
-
-    private void ProcessKeyUp(string propertyName, KeyEventArgs e)
-    {
-      switch (e.Key)
-      {
-        case Key.LeftCtrl:
-        case Key.RightCtrl:
-        case Key.LeftShift:
-        case Key.RightShift:
-        case Key.LeftAlt:
-        case Key.RightAlt:
-        case Key.LWin:
-        case Key.RWin:
-        case Key.System:
-        case Key.Back:
-        case Key.Delete:
-        case Key.Escape:
-          break;
-        default:
-          var hotKey = new HotKey(e.Key, ModifierKeys.Control | ModifierKeys.Shift);
-          Properties.Settings.Default.GetType().GetProperty(propertyName).SetValue(Settings, hotKey);
-          break;
-      }
-    }
-
-    private void ApplySettings()
-    {
-      // Deal with hotkeys
-      try
-      {
-        App.HotKeyManager.Unregister(Properties.Settings.Default.ScreenHotKey);
-        App.HotKeyManager.Unregister(Properties.Settings.Default.SelectionHotKey);
-
-        App.HotKeyManager.Register(((Settings)Settings).ScreenHotKey);
-        App.HotKeyManager.Register(((Settings)Settings).SelectionHotKey);
-      }
-      catch (Exception e)
-      {
-        Messenger.Raise(new TaskDialogMessage(new TaskDialogOptions
-        {
-          Title = "Settings",
-          MainInstruction = "Application Exception",
-          Content = e.Message,
-          MainIcon = VistaTaskDialogIcon.Error,
-          CommonButtons = TaskDialogCommonButtons.Close
-        }));
-        return;
-      }
-
-      if (!Properties.Settings.Default.ImageUploader.Equals(((Settings)Settings).ImageUploader))
-      {
-        App.UploaderManager.Initialize(((Settings)Settings).ImageUploader);
-      }
-
-      // Apply the settings to Properties.Settings.Default
-      foreach (var prop in Properties.Settings.Default.Properties)
-      {
-        Properties.Settings.Default.GetType()
-          .GetProperty(((SettingsProperty)prop).Name)
-          .SetValue(Properties.Settings.Default,
-            Settings.GetType().GetProperty(((SettingsProperty)prop).Name).GetValue(Settings));
-      }
-
-      Properties.Settings.Default.Save();
-      ButtonCancelCommand.Execute();
+      App.Settings.Changed.Subscribe(_ => this.RaisePropertyChanged("Settings"));
     }
   }
 }
