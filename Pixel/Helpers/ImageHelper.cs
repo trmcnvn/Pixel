@@ -11,7 +11,9 @@ namespace Pixel.Helpers {
 
   public static class CaptureScreen {
     public static async Task<string> Capture(int x, int y, int width, int height) {
-      if (width < 10 || height < 10) return string.Empty;
+      if (width < 10 || height < 10) {
+        return string.Empty;
+      }
       return await Task.Run(() => {
         using (var bmp = new Bitmap(width, height)) {
           using (var gfx = Graphics.FromImage(bmp)) {

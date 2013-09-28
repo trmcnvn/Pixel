@@ -22,8 +22,9 @@ namespace Pixel.Views {
       this.WhenAnyObservable(x => x.ViewModel.CaptureCommand).Subscribe(async r => {
         Close();
         var rect = r as Rectangle;
-        var file = await CaptureScreen.Capture((int)Canvas.GetLeft(rect), (int)Canvas.GetTop(rect), (int)rect.Width,
-          (int)rect.Height);
+        var file =
+          await
+            CaptureScreen.Capture((int)Canvas.GetLeft(rect), (int)Canvas.GetTop(rect), (int)rect.Width, (int)rect.Height);
 
         var previewWindow = new PreviewWindow(file);
         previewWindow.Show();
@@ -35,15 +36,16 @@ namespace Pixel.Views {
         Canvas.SetTop(Target, point.Y);
       });
 
-      EventsMixin.Events(this).MouseMove.Where(x => x.LeftButton == MouseButtonState.Pressed)
-        .Subscribe(e => {
-          var point = e.GetPosition(this);
-          var width = point.X - Canvas.GetLeft(Target);
-          var height = point.Y - Canvas.GetTop(Target);
-          if (!(width > 0) || !(height > 0)) return;
-          Target.Width = width;
-          Target.Height = height;
-        });
+      EventsMixin.Events(this).MouseMove.Where(x => x.LeftButton == MouseButtonState.Pressed).Subscribe(e => {
+        var point = e.GetPosition(this);
+        var width = point.X - Canvas.GetLeft(Target);
+        var height = point.Y - Canvas.GetTop(Target);
+        if (!(width > 0) || !(height > 0)) {
+          return;
+        }
+        Target.Width = width;
+        Target.Height = height;
+      });
 
       EventsMixin.Events(this).MouseLeftButtonUp.Subscribe(e => {
         Target.Visibility = Visibility.Collapsed;

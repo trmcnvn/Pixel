@@ -27,8 +27,9 @@ namespace Pixel.Views {
           InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
           Filter = "All Files (*.*)|*.*",
           Title = "Save Image",
-          FileName = string.Format("{0}.{1}", DateTime.Now.ToString("yy-MM-dd-hh-mm-ss"),
-            App.Settings.ImageFormat.ToString().ToLower()),
+          FileName =
+            string.Format("{0}.{1}", DateTime.Now.ToString("yy-MM-dd-hh-mm-ss"),
+              App.Settings.ImageFormat.ToString().ToLower()),
           OverwritePrompt = true
         };
         dialog.ShowDialog();

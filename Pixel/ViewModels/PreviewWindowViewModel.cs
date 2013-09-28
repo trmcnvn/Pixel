@@ -8,6 +8,16 @@ using ReactiveUI;
 
 namespace Pixel.ViewModels {
   public class PreviewWindowViewModel : ReactiveObject {
+    public string ImageSource { get; private set; }
+
+    public ReactiveCommand SaveDlgCommand { get; private set; }
+
+    public ReactiveCommand CloseCommand { get; private set; }
+
+    public ReactiveCommand UploadCommand { get; private set; }
+
+    public ReactiveCommand SaveFileCommand { get; private set; }
+
     public PreviewWindowViewModel(string file) {
       ImageSource = file;
       SaveDlgCommand = new ReactiveCommand();
@@ -22,7 +32,9 @@ namespace Pixel.ViewModels {
       SaveFileCommand = new ReactiveCommand();
       SaveFileCommand.Subscribe(async x => {
         var saveFile = x as string;
-        if (String.IsNullOrEmpty(saveFile)) return;
+        if (String.IsNullOrEmpty(saveFile)) {
+          return;
+        }
         await Task.Run(() => {
           using (var image = new Bitmap(ImageSource)) {
             switch (App.Settings.ImageFormat) {
@@ -33,7 +45,9 @@ namespace Pixel.ViewModels {
                 var encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
                 using (var encParams = new EncoderParameters(1)) {
                   encParams.Param[0] = new EncoderParameter(Encoder.Quality, App.Settings.ImageQuality);
-                  if (encoder != null) image.Save(saveFile, encoder, encParams);
+                  if (encoder != null) {
+                    image.Save(saveFile, encoder, encParams);
+                  }
                 }
                 break;
               case ImageFormats.Bmp:
@@ -44,11 +58,5 @@ namespace Pixel.ViewModels {
         });
       });
     }
-
-    public string ImageSource { get; private set; }
-    public ReactiveCommand SaveDlgCommand { get; private set; }
-    public ReactiveCommand CloseCommand { get; private set; }
-    public ReactiveCommand UploadCommand { get; private set; }
-    public ReactiveCommand SaveFileCommand { get; private set; }
   }
 }

@@ -23,6 +23,7 @@ namespace Pixel {
     }
 
     public static UserSettings Settings { get; private set; }
+
     public static Uploader Uploader { get; private set; }
 
     public static string RoamingPath {
@@ -46,8 +47,9 @@ namespace Pixel {
         Environment.Exit(0);
       }
 
-      if (!Directory.Exists(RoamingPath))
+      if (!Directory.Exists(RoamingPath)) {
         Directory.CreateDirectory(RoamingPath);
+      }
 
       ProfileOptimization.SetProfileRoot(RoamingPath);
       ProfileOptimization.StartProfile("Pixel.profile");
@@ -69,8 +71,9 @@ namespace Pixel {
       if (key != null) {
         if (Settings.RunOnStartup) {
           key.SetValue(ApplicationName, Assembly.GetExecutingAssembly().Location);
-        } else if (key.GetValueNames().Contains(ApplicationName))
+        } else if (key.GetValueNames().Contains(ApplicationName)) {
           key.DeleteValue(ApplicationName);
+        }
         key.Close();
       }
 

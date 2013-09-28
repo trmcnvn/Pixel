@@ -5,6 +5,16 @@ using ReactiveUI;
 
 namespace Pixel.ViewModels {
   public class SettingsWindowViewModel : ReactiveObject {
+    public ReactiveCommand CloseCommand { get; private set; }
+
+    public ReactiveCommand KeyCommand { get; private set; }
+
+    public ReactiveCommand ExceptionCommand { get; private set; }
+
+    public UserSettings Settings {
+      get { return App.Settings; }
+    }
+
     public SettingsWindowViewModel() {
       CloseCommand = new ReactiveCommand();
       ExceptionCommand = new ReactiveCommand();
@@ -12,7 +22,9 @@ namespace Pixel.ViewModels {
       KeyCommand = new ReactiveCommand();
       KeyCommand.Subscribe(x => {
         var tuple = x as Tuple<string, HotKey>;
-        if (tuple.Item2 == null) return;
+        if (tuple.Item2 == null) {
+          return;
+        }
 
         App.HotKeyManager.Unregister(Settings.ScreenKey);
         App.HotKeyManager.Unregister(Settings.SelectionKey);
@@ -34,27 +46,18 @@ namespace Pixel.ViewModels {
         // Only apply the change if there hasn't been an error registering them
         Settings.GetType().GetProperty(tuple.Item1).SetValue(Settings, tuple.Item2);
       });
-      KeyCommand.ThrownExceptions.Subscribe(
-        ex => {
-          // We have to re-register the hotkeys here so
-          // that both are registered with the system
-          App.HotKeyManager.Unregister(Settings.ScreenKey);
-          App.HotKeyManager.Unregister(Settings.SelectionKey);
-          App.HotKeyManager.Register(Settings.ScreenKey);
-          App.HotKeyManager.Register(Settings.SelectionKey);
+      KeyCommand.ThrownExceptions.Subscribe(ex => {
+        // We have to re-register the hotkeys here so
+        // that both are registered with the system
+        App.HotKeyManager.Unregister(Settings.ScreenKey);
+        App.HotKeyManager.Unregister(Settings.SelectionKey);
+        App.HotKeyManager.Register(Settings.ScreenKey);
+        App.HotKeyManager.Register(Settings.SelectionKey);
 
-          ExceptionCommand.Execute(ex);
-        });
+        ExceptionCommand.Execute(ex);
+      });
 
       App.Settings.Changed.Subscribe(_ => this.RaisePropertyChanged("Settings"));
-    }
-
-    public ReactiveCommand CloseCommand { get; private set; }
-    public ReactiveCommand KeyCommand { get; private set; }
-    public ReactiveCommand ExceptionCommand { get; private set; }
-
-    public UserSettings Settings {
-      get { return App.Settings; }
     }
   }
 }

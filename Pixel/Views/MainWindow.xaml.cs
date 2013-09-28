@@ -7,10 +7,7 @@ using System.Windows.Forms;
 using Pixel.Helpers;
 using Pixel.Messages;
 using Pixel.ViewModels;
-using Pixel.Views.Converters;
 using ReactiveUI;
-using ReactiveUI.Xaml;
-using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace Pixel.Views {
@@ -22,10 +19,9 @@ namespace Pixel.Views {
       InitializeComponent();
       ViewModel = new MainWindowViewModel();
 
-      this.WhenAnyValue(x => x.WindowState).Subscribe(x => {
-        if (x != WindowState.Minimized) return;
-        Hide();
-      });
+      WindowState = ViewModel.IsVisible ? WindowState.Normal : WindowState.Minimized;
+
+      this.WhenAnyValue(x => x.WindowState).Where(x => x == WindowState.Minimized).Subscribe(x => Hide());
       this.WhenAnyObservable(x => x.ViewModel.VisiblityCommand).Subscribe(_ => {
         Show();
         WindowState = WindowState.Normal;
@@ -55,15 +51,15 @@ namespace Pixel.Views {
         ViewModel.OpenCommand.Execute(dialog.FileNames);
       });
 
-      this.WhenAnyObservable(x => x.ViewModel.ScreenCommand)
-        .Subscribe(async _ => {
-          var file = await CaptureScreen.Capture(Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y,
-            Screen.PrimaryScreen.Bounds.Width,
-            Screen.PrimaryScreen.Bounds.Height);
+      this.WhenAnyObservable(x => x.ViewModel.ScreenCommand).Subscribe(async _ => {
+        var file =
+          await
+            CaptureScreen.Capture(Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y,
+              Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-          var previewWindow = new PreviewWindow(file);
-          previewWindow.Show();
-        });
+        var previewWindow = new PreviewWindow(file);
+        previewWindow.Show();
+      });
 
       this.WhenAnyObservable(x => x.ViewModel.SelectionCommand).Subscribe(_ => {
         var captureWindow = new CaptureWindow();

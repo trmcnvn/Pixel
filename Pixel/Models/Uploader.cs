@@ -19,23 +19,28 @@ namespace Pixel.Models {
 
     protected virtual void OnImageUploadSuccess(UploaderEventArgs e) {
       var handler = ImageUploadSuccess;
-      if (handler != null) handler(this, e);
+      if (handler != null) {
+        handler(this, e);
+      }
     }
 
     public event EventHandler<UploaderEventArgs> ImageUploadFailed;
 
     protected virtual void OnImageUploadFailed(UploaderEventArgs e) {
       var handler = ImageUploadFailed;
-      if (handler != null) handler(this, e);
+      if (handler != null) {
+        handler(this, e);
+      }
     }
 
     public async Task Upload(string filePath) {
       using (var webClient = new WebClient()) {
         try {
           webClient.Headers.Add("Authorization", string.Format("Client-ID {0}", _clientId));
-          var data = await webClient.UploadValuesTaskAsync(new Uri(_uploadPath), new NameValueCollection {
-            { "image", Convert.ToBase64String(File.ReadAllBytes(filePath)) }
-          });
+          var data =
+            await
+              webClient.UploadValuesTaskAsync(new Uri(_uploadPath),
+                new NameValueCollection { { "image", Convert.ToBase64String(File.ReadAllBytes(filePath)) } });
 
           using (var ms = new MemoryStream(data)) {
             var doc = XDocument.Load(ms);
@@ -43,16 +48,12 @@ namespace Pixel.Models {
               var xElement = doc.Root.Element("link");
               if (xElement != null) {
                 var link = xElement.Value;
-                OnImageUploadSuccess(new UploaderEventArgs {
-                  ImageUrl = link
-                });
+                OnImageUploadSuccess(new UploaderEventArgs { ImageUrl = link });
               }
             }
           }
         } catch (Exception ex) {
-          OnImageUploadFailed(new UploaderEventArgs {
-            Exception = ex
-          });
+          OnImageUploadFailed(new UploaderEventArgs { Exception = ex });
         }
       }
     }
@@ -60,6 +61,7 @@ namespace Pixel.Models {
 
   public class UploaderEventArgs : EventArgs {
     public string ImageUrl { get; set; }
+
     public Exception Exception { get; set; }
   }
 }
