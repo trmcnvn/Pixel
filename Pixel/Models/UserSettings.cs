@@ -78,18 +78,13 @@ namespace Pixel.Models {
     public static UserSettings Load() {
       try {
         return JsonConvert.DeserializeObject<UserSettings>(File.ReadAllText(App.SettingsPath, Encoding.UTF8));
-      } catch (Exception ex) {
-        LogHost.Default.ErrorException("Couldn't load settings, creating them from scratch", ex);
+      } catch (Exception) {
         return new UserSettings();
       }
     }
 
     public void Save() {
-      try {
-        File.WriteAllText(App.SettingsPath, JsonConvert.SerializeObject(this), Encoding.UTF8);
-      } catch (Exception ex) {
-        LogHost.Default.ErrorException("Couldn't save settings", ex);
-      }
+      File.WriteAllText(App.SettingsPath, JsonConvert.SerializeObject(this), Encoding.UTF8);
     }
   }
 }

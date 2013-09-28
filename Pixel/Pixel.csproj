@@ -133,10 +133,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.5.1.2\lib\Portable-Net45+WinRT45+WP8\ReactiveUI.dll</HintPath>
     </Reference>
@@ -145,9 +141,6 @@
     </Reference>
     <Reference Include="ReactiveUI.Events">
       <HintPath>..\packages\reactiveui-events.5.1.2\lib\net45\ReactiveUI.Events.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI.NLog">
-      <HintPath>..\packages\reactiveui-nlog.5.1.2\lib\net45\ReactiveUI.NLog.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI.Xaml">
       <HintPath>..\packages\reactiveui-platforms.5.1.2\lib\net45\ReactiveUI.Xaml.dll</HintPath>
@@ -195,6 +188,7 @@
     </Compile>
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\TempFile.cs" />
+    <Compile Include="Messages\MessageBoxMessage.cs" />
     <Compile Include="Messages\NotificationMessage.cs" />
     <Compile Include="Models\Uploader.cs" />
     <Compile Include="Models\UserSettings.cs" />
@@ -206,12 +200,16 @@
       <DependentUpon>CaptureWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Converters\BooleanToWindowStateConverter.cs" />
+    <Compile Include="Views\Converters\HotKeyToStringConverter.cs" />
     <Compile Include="Views\Converters\StringToImageSourceConverter.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PreviewWindow.xaml.cs">
       <DependentUpon>PreviewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +237,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PreviewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

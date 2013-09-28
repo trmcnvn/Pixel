@@ -7,13 +7,8 @@ using System.Threading;
 using System.Windows;
 using GlobalHotKey;
 using Microsoft.Win32;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
 using Pixel.Helpers;
 using Pixel.Models;
-using ReactiveUI;
-using LogLevel = NLog.LogLevel;
 
 namespace Pixel {
   /// <summary>
@@ -57,23 +52,6 @@ namespace Pixel {
       ProfileOptimization.SetProfileRoot(RoamingPath);
       ProfileOptimization.StartProfile("Pixel.profile");
 
-      // Setup NLog
-      var config = new LoggingConfiguration();
-      var fileTarget = new FileTarget();
-      config.AddTarget("default", fileTarget);
-
-      fileTarget.FileName = string.Format(@"{0}\Debug.log", RoamingPath);
-      fileTarget.Layout =
-        @"${shortdate} - ${level:uppercase=true}: ${message}${onexception:${newline}${exception:format=ToString}}";
-      fileTarget.KeepFileOpen = false;
-      fileTarget.DeleteOldFileOnStartup = true;
-
-      var defaultRule = new LoggingRule("*", LogLevel.Info, fileTarget);
-      config.LoggingRules.Add(defaultRule);
-
-      LogManager.Configuration = config;
-      LogHost.Default.Level = ReactiveUI.LogLevel.Debug;
-
       Uploader = new Uploader();
       Settings = UserSettings.Load();
 
@@ -83,7 +61,6 @@ namespace Pixel {
         HotKeyManager.Register(Settings.SelectionKey);
       } catch (Exception ex) {
         MessageBox.Show(ex.Message, "Exception");
-        LogHost.Default.ErrorException("Unable to register the hotkeys", ex);
       }
     }
 

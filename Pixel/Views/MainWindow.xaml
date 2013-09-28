@@ -16,7 +16,7 @@
                 <ContextMenu>
                     <MenuItem x:Name="TrayShow" Header="Show/Hide Pixel" />
                     <MenuItem x:Name="TrayUpload" Header="Upload..." />
-                    <MenuItem Header="Settings..." />
+                    <MenuItem x:Name="TraySettings" Header="Settings..." />
                     <Separator />
                     <MenuItem x:Name="TrayExit" Header="Exit Pixel" />
                 </ContextMenu>
@@ -27,7 +27,7 @@
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem x:Name="MenuUpload" Header="Upload..." />
-                    <MenuItem Header="Settings..." />
+                    <MenuItem x:Name="MenuSettings" Header="Settings..." />
                     <Separator />
                     <MenuItem x:Name="MenuExit" Header="Exit" />
                 </MenuItem>

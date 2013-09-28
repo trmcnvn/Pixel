@@ -35,6 +35,8 @@ namespace Pixel.Views {
       this.BindCommand(ViewModel, x => x.UploadCommand, x => x.ButtonBrowse);
       this.BindCommand(ViewModel, x => x.ScreenCommand, x => x.ButtonScreen);
       this.BindCommand(ViewModel, x => x.SelectionCommand, x => x.ButtonSelection);
+      this.BindCommand(ViewModel, x => x.SettingsCommand, x => x.MenuSettings);
+      this.BindCommand(ViewModel, x => x.SettingsCommand, x => x.TraySettings);
 
       this.WhenAnyObservable(x => x.ViewModel.UploadCommand).Subscribe(_ => {
         var dialog = new OpenFileDialog {
@@ -60,6 +62,11 @@ namespace Pixel.Views {
       this.WhenAnyObservable(x => x.ViewModel.SelectionCommand).Subscribe(_ => {
         var captureWindow = new CaptureWindow { Owner = this };
         captureWindow.Show();
+      });
+
+      this.WhenAnyObservable(x => x.ViewModel.SettingsCommand).Subscribe(_ => {
+        var settingsWindow = new SettingsWindow { Owner = this };
+        settingsWindow.Show();
       });
 
       TrayShow.Events().Click.Subscribe(_ => ViewModel.VisiblityCommand.Execute(null));

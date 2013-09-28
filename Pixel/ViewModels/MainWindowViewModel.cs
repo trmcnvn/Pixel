@@ -19,6 +19,7 @@ namespace Pixel.ViewModels {
 
       VisiblityCommand = new ReactiveCommand();
       DropCommand = new ReactiveCommand();
+      SettingsCommand = new ReactiveCommand();
       UploadCommand = new ReactiveCommand();
       ScreenCommand = new ReactiveCommand();
       SelectionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsCaptureWindowOpen).Select(x => !x));
@@ -71,7 +72,6 @@ namespace Pixel.ViewModels {
         handler => App.Uploader.ImageUploadFailed -= handler).Select(x => x.EventArgs)
         .Subscribe(e => {
           if (!App.Settings.Notifications) return;
-          LogHost.Default.ErrorException("Failed to upload image", e.Exception);
           var msg = string.Format("Image Failed: {0}", e.Exception.Message);
           MessageBus.Current.SendMessage(new NotificationMessage(Title, msg,
             BalloonIcon.Error));
@@ -101,6 +101,7 @@ namespace Pixel.ViewModels {
     public ReactiveCommand ScreenCommand { get; private set; }
     public ReactiveCommand SelectionCommand { get; private set; }
     public ReactiveCommand OpenCommand { get; private set; }
+    public ReactiveCommand SettingsCommand { get; private set; }
 
     public bool IsCaptureWindowOpen {
       get { return _isCaptureWindowOpen; }
