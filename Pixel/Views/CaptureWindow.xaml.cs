@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Reactive.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Shapes;
 using Pixel.Helpers;
 using Pixel.ViewModels;
 using ReactiveUI;
-using EventsMixin = System.Windows.Controls.EventsMixin;
+using MouseButtonState = System.Windows.Input.MouseButtonState;
+using Visibility = System.Windows.Visibility;
 
 namespace Pixel.Views {
   /// <summary>

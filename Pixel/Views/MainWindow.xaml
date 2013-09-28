@@ -14,7 +14,7 @@
         <taskbarNotification:TaskbarIcon x:Name="TaskbarIcon" IconSource="..\Resources\pixel.ico">
             <taskbarNotification:TaskbarIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="TrayShow" Header="Show/Hide Pixel" />
+                    <MenuItem x:Name="TrayShow" Header="Show Pixel" />
                     <MenuItem x:Name="TrayUpload" Header="Upload..." />
                     <MenuItem x:Name="TraySettings" Header="Settings..." />
                     <Separator />

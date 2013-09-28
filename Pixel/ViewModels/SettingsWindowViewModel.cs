@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Windows;
 using GlobalHotKey;
-using Pixel.Messages;
 using Pixel.Models;
 using ReactiveUI;
 
@@ -9,6 +7,7 @@ namespace Pixel.ViewModels {
   public class SettingsWindowViewModel : ReactiveObject {
     public SettingsWindowViewModel() {
       CloseCommand = new ReactiveCommand();
+      ExceptionCommand = new ReactiveCommand();
 
       KeyCommand = new ReactiveCommand();
       KeyCommand.Subscribe(x => {
@@ -44,8 +43,7 @@ namespace Pixel.ViewModels {
           App.HotKeyManager.Register(Settings.ScreenKey);
           App.HotKeyManager.Register(Settings.SelectionKey);
 
-          MessageBus.Current.SendMessage(new MessageBoxMessage(App.ApplicationName, ex.Message, MessageBoxImage.Error,
-            MessageBoxButton.OK));
+          ExceptionCommand.Execute(ex);
         });
 
       App.Settings.Changed.Subscribe(_ => this.RaisePropertyChanged("Settings"));
@@ -53,6 +51,7 @@ namespace Pixel.ViewModels {
 
     public ReactiveCommand CloseCommand { get; private set; }
     public ReactiveCommand KeyCommand { get; private set; }
+    public ReactiveCommand ExceptionCommand { get; private set; }
 
     public UserSettings Settings {
       get { return App.Settings; }

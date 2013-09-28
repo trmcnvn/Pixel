@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using Pixel.Helpers;
@@ -9,6 +10,7 @@ using Pixel.ViewModels;
 using Pixel.Views.Converters;
 using ReactiveUI;
 using ReactiveUI.Xaml;
+using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace Pixel.Views {
@@ -20,13 +22,17 @@ namespace Pixel.Views {
       InitializeComponent();
       ViewModel = new MainWindowViewModel();
 
-      this.Bind(ViewModel, x => x.IsVisible, x => x.WindowState, null, new BooleanToWindowStateConverter(),
-        new BooleanToWindowStateConverter());
-      this.OneWayBind(ViewModel, x => x.IsVisible, x => x.Visibility, () => true, BooleanToVisibilityHint.UseHidden);
+      this.WhenAnyValue(x => x.WindowState).Subscribe(x => {
+        if (x != WindowState.Minimized) return;
+        Hide();
+      });
+      this.WhenAnyObservable(x => x.ViewModel.VisiblityCommand).Subscribe(_ => {
+        Show();
+        WindowState = WindowState.Normal;
+      });
 
       this.OneWayBind(ViewModel, x => x.Title, x => x.Title);
       this.OneWayBind(ViewModel, x => x.IsTopmost, x => x.Topmost);
-      this.OneWayBind(ViewModel, x => x.IsVisible, x => x.ShowInTaskbar);
       this.OneWayBind(ViewModel, x => x.Title, x => x.TaskbarIcon.ToolTipText);
       this.OneWayBind(ViewModel, x => x.VisiblityCommand, x => x.TaskbarIcon.DoubleClickCommand);
       this.OneWayBind(ViewModel, x => x.ImageHistory, x => x.HistoryList.ItemsSource);
@@ -55,12 +61,12 @@ namespace Pixel.Views {
             Screen.PrimaryScreen.Bounds.Width,
             Screen.PrimaryScreen.Bounds.Height);
 
-          var previewWindow = new PreviewWindow(file) { Owner = this };
+          var previewWindow = new PreviewWindow(file);
           previewWindow.Show();
         });
 
       this.WhenAnyObservable(x => x.ViewModel.SelectionCommand).Subscribe(_ => {
-        var captureWindow = new CaptureWindow { Owner = this };
+        var captureWindow = new CaptureWindow();
         captureWindow.Show();
       });
 

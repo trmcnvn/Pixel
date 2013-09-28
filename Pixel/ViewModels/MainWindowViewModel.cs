@@ -24,7 +24,7 @@ namespace Pixel.ViewModels {
       ScreenCommand = new ReactiveCommand();
       SelectionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsCaptureWindowOpen).Select(x => !x));
       SelectionCommand.Subscribe(_ => IsCaptureWindowOpen = true);
-      VisiblityCommand.Subscribe(_ => IsVisible = !IsVisible);
+      //VisiblityCommand.Subscribe(_ => IsVisible = true);
 
       DropCommand.Subscribe(async ev => {
         var e = ev as DragEventArgs;

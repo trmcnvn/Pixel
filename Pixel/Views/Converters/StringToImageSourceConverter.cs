@@ -3,6 +3,9 @@ using System.Windows.Media.Imaging;
 using ReactiveUI;
 
 namespace Pixel.Views.Converters {
+  /// <summary>
+  /// We override this converter so that the WPF Control doesn't keep a fucking handle on the file
+  /// </summary>
   public class StringToImageSourceConverter : IBindingTypeConverter {
     #region IBindingTypeConverter Members
 

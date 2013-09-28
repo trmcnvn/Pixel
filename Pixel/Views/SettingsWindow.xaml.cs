@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GlobalHotKey;
-using Pixel.Messages;
 using Pixel.ViewModels;
 using Pixel.Views.Converters;
 using ReactiveUI;
@@ -32,8 +31,10 @@ namespace Pixel.Views {
 
       this.WhenAnyObservable(x => x.ViewModel.CloseCommand).Subscribe(_ => Close());
       this.WhenAnyObservable(x => x.ViewModel.Settings.Changed).Subscribe(e => TextStatus.Text = "Settings Saved");
-
-      MessageBus.Current.Listen<MessageBoxMessage>().Subscribe(x => MessageBox.Show(x.Text, x.Title, x.Buttons, x.Icon));
+      this.WhenAnyObservable(x => x.ViewModel.ExceptionCommand).Subscribe(x => {
+        var ex = x as Exception;
+        MessageBox.Show(ex.Message, App.ApplicationName, MessageBoxButton.OK, MessageBoxImage.Error);
+      });
 
       ScreenKey.Events().PreviewKeyUp.Subscribe(e => {
         var hk = ProcessKey(e);
