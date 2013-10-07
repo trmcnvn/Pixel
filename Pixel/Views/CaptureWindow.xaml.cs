@@ -26,6 +26,9 @@ namespace Pixel.Views {
           await
             CaptureScreen.Capture((int)Canvas.GetLeft(rect), (int)Canvas.GetTop(rect), (int)rect.Width, (int)rect.Height);
 
+        if (string.IsNullOrEmpty(file))
+          return;
+
         var previewWindow = new PreviewWindow(file);
         previewWindow.Show();
       });

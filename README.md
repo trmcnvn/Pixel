@@ -4,7 +4,7 @@ The easiest way to capture and upload screenshots to the web on Windows.
 
 ## Install
 
-Download the installer [here](https://s3-ap-southeast-2.amazonaws.com/vevix/pixel/setup.exe)
+Download the ZIP package [here](http://goo.gl/d9P6mv)
 
 ## License
 

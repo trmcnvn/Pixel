@@ -20,8 +20,6 @@ namespace Pixel.ViewModels {
       get { return App.Settings.AlwaysOnTop; }
     }
 
-    public bool IsVisible { get; set; }
-
     public ReactiveList<string> ImageHistory { get; private set; }
 
     public ReactiveCommand VisiblityCommand { get; private set; }
@@ -45,7 +43,6 @@ namespace Pixel.ViewModels {
 
     public MainWindowViewModel() {
       ImageHistory = new ReactiveList<string>();
-      IsVisible = !App.Settings.StartMinimized;
       VisiblityCommand = new ReactiveCommand();
       DropCommand = new ReactiveCommand();
       SettingsCommand = new ReactiveCommand();

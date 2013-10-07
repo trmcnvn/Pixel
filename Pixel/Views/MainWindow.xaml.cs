@@ -19,7 +19,7 @@ namespace Pixel.Views {
       InitializeComponent();
       ViewModel = new MainWindowViewModel();
 
-      WindowState = ViewModel.IsVisible ? WindowState.Normal : WindowState.Minimized;
+      WindowState = !App.Settings.StartMinimized ? WindowState.Normal : WindowState.Minimized;
 
       this.WhenAnyValue(x => x.WindowState).Where(x => x == WindowState.Minimized).Subscribe(x => Hide());
       this.WhenAnyObservable(x => x.ViewModel.VisiblityCommand).Subscribe(_ => {
