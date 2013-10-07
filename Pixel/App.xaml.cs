@@ -47,9 +47,8 @@ namespace Pixel {
         Environment.Exit(0);
       }
 
-      if (!Directory.Exists(RoamingPath)) {
+      if (!Directory.Exists(RoamingPath))
         Directory.CreateDirectory(RoamingPath);
-      }
 
       ProfileOptimization.SetProfileRoot(RoamingPath);
       ProfileOptimization.StartProfile("Pixel.profile");
@@ -69,17 +68,15 @@ namespace Pixel {
     protected override void OnExit(ExitEventArgs e) {
       var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
       if (key != null) {
-        if (Settings.RunOnStartup) {
+        if (Settings.RunOnStartup)
           key.SetValue(ApplicationName, Assembly.GetExecutingAssembly().Location);
-        } else if (key.GetValueNames().Contains(ApplicationName)) {
+        else if (key.GetValueNames().Contains(ApplicationName))
           key.DeleteValue(ApplicationName);
-        }
         key.Close();
       }
 
-      foreach (var file in TempFile.Files) {
+      foreach (var file in TempFile.Files)
         File.Delete(file);
-      }
 
       Settings.Save();
       base.OnExit(e);

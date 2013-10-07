@@ -92,7 +92,7 @@ namespace Pixel.ViewModels {
       Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadSuccess += handler,
         handler => App.Uploader.ImageUploadSuccess -= handler).Select(x => x.EventArgs).Subscribe(e => {
           if (App.Settings.CopyLinks) {
-            Clipboard.SetText(e.ImageUrl);
+            Clipboard.SetDataObject(e.ImageUrl);
           }
           ImageHistory.Add(e.ImageUrl);
           if (!App.Settings.Notifications) {
