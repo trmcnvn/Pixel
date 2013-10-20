@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace Pixel.Views {
   /// <summary>
-  ///   Interaction logic for PreviewWindow.xaml
+  /// Interaction logic for PreviewWindow.xaml
   /// </summary>
   public partial class PreviewWindow : IViewFor<PreviewWindowViewModel> {
     public PreviewWindow(string file) {

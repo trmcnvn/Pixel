@@ -12,7 +12,7 @@ using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace Pixel.Views {
   /// <summary>
-  ///   Interaction logic for MainWindow.xaml
+  /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : IViewFor<MainWindowViewModel> {
     public MainWindow() {

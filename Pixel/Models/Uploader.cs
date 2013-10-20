@@ -19,18 +19,16 @@ namespace Pixel.Models {
 
     protected virtual void OnImageUploadSuccess(UploaderEventArgs e) {
       var handler = ImageUploadSuccess;
-      if (handler != null) {
+      if (handler != null)
         handler(this, e);
-      }
     }
 
     public event EventHandler<UploaderEventArgs> ImageUploadFailed;
 
     protected virtual void OnImageUploadFailed(UploaderEventArgs e) {
       var handler = ImageUploadFailed;
-      if (handler != null) {
+      if (handler != null)
         handler(this, e);
-      }
     }
 
     public async Task Upload(string filePath) {

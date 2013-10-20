@@ -10,7 +10,7 @@ using Visibility = System.Windows.Visibility;
 
 namespace Pixel.Views {
   /// <summary>
-  ///   Interaction logic for CaptureWindow.xaml
+  /// Interaction logic for CaptureWindow.xaml
   /// </summary>
   public partial class CaptureWindow : IViewFor<CaptureWindowViewModel> {
     public CaptureWindow() {
@@ -43,9 +43,8 @@ namespace Pixel.Views {
         var point = e.GetPosition(this);
         var width = point.X - Canvas.GetLeft(Target);
         var height = point.Y - Canvas.GetTop(Target);
-        if (!(width > 0) || !(height > 0)) {
+        if (!(width > 0) || !(height > 0))
           return;
-        }
         Target.Width = width;
         Target.Height = height;
       });

@@ -32,9 +32,8 @@ namespace Pixel.ViewModels {
       SaveFileCommand = new ReactiveCommand();
       SaveFileCommand.Subscribe(async x => {
         var saveFile = x as string;
-        if (String.IsNullOrEmpty(saveFile)) {
+        if (String.IsNullOrEmpty(saveFile))
           return;
-        }
         await Task.Run(() => {
           using (var image = new Bitmap(ImageSource)) {
             switch (App.Settings.ImageFormat) {
@@ -45,9 +44,8 @@ namespace Pixel.ViewModels {
                 var encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
                 using (var encParams = new EncoderParameters(1)) {
                   encParams.Param[0] = new EncoderParameter(Encoder.Quality, App.Settings.ImageQuality);
-                  if (encoder != null) {
+                  if (encoder != null)
                     image.Save(saveFile, encoder, encParams);
-                  }
                 }
                 break;
               case ImageFormats.Bmp:

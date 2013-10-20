@@ -22,9 +22,8 @@ namespace Pixel.ViewModels {
       KeyCommand = new ReactiveCommand();
       KeyCommand.Subscribe(x => {
         var tuple = x as Tuple<string, HotKey>;
-        if (tuple.Item2 == null) {
+        if (tuple.Item2 == null)
           return;
-        }
 
         App.HotKeyManager.Unregister(Settings.ScreenKey);
         App.HotKeyManager.Unregister(Settings.SelectionKey);

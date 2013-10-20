@@ -53,26 +53,21 @@ namespace Pixel.ViewModels {
 
       DropCommand.Subscribe(async ev => {
         var e = ev as DragEventArgs;
-        if (e == null) {
+        if (e == null)
           return;
-        }
-        if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop))
           return;
-        }
         var data = e.Data.GetData(DataFormats.FileDrop) as IEnumerable<string>;
-        if (data == null) {
+        if (data == null)
           return;
-        }
-        foreach (var file in data) {
+        foreach (var file in data)
           await App.Uploader.Upload(file);
-        }
       });
 
       OpenCommand = new ReactiveCommand();
       OpenCommand.Subscribe(async files => {
-        foreach (var file in (IEnumerable<string>)files) {
+        foreach (var file in (IEnumerable<string>)files)
           await App.Uploader.Upload(file);
-        }
       });
 
       MessageBus.Current.Listen<object>("CaptureWindow").Subscribe(_ => IsCaptureWindowOpen = false);
@@ -80,33 +75,29 @@ namespace Pixel.ViewModels {
       Observable.FromEventPattern<KeyPressedEventArgs>(handler => App.HotKeyManager.KeyPressed += handler,
         handler => App.HotKeyManager.KeyPressed -= handler).Select(x => x.EventArgs).Subscribe(e => {
           var hk = e.HotKey;
-          if (hk.Equals(App.Settings.ScreenKey)) {
+          if (hk.Equals(App.Settings.ScreenKey))
             ScreenCommand.Execute(null);
-          } else if (hk.Equals(App.Settings.SelectionKey)) {
-            if (SelectionCommand.CanExecute(null)) {
+          else if (hk.Equals(App.Settings.SelectionKey)) {
+            if (SelectionCommand.CanExecute(null))
               SelectionCommand.Execute(null);
-            }
           }
         });
 
       Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadSuccess += handler,
         handler => App.Uploader.ImageUploadSuccess -= handler).Select(x => x.EventArgs).Subscribe(e => {
-          if (App.Settings.CopyLinks) {
+          if (App.Settings.CopyLinks)
             Clipboard.SetDataObject(e.ImageUrl);
-          }
           ImageHistory.Add(e.ImageUrl);
-          if (!App.Settings.Notifications) {
+          if (!App.Settings.Notifications)
             return;
-          }
           var msg = string.Format("Image Uploaded: {0}", e.ImageUrl);
           MessageBus.Current.SendMessage(new NotificationMessage(Title, msg, BalloonIcon.Info));
         });
 
       Observable.FromEventPattern<UploaderEventArgs>(handler => App.Uploader.ImageUploadFailed += handler,
         handler => App.Uploader.ImageUploadFailed -= handler).Select(x => x.EventArgs).Subscribe(e => {
-          if (!App.Settings.Notifications) {
+          if (!App.Settings.Notifications)
             return;
-          }
           var msg = string.Format("Image Failed: {0}", e.Exception.Message);
           MessageBus.Current.SendMessage(new NotificationMessage(Title, msg, BalloonIcon.Error));
         });
