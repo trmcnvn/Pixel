@@ -1,6 +1,8 @@
 # Pixel
 
-The easiest way to capture and upload screenshots to the web on Windows.
+Hotkey based client that uploads screenshots to Imgur.
+
+![pixel](http://i.imgur.com/4RuCFnD.png)
 
 ## Install
 
