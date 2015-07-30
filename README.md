@@ -1,8 +1,6 @@
 # Pixel
 
-Hotkey based client that uploads screenshots to Imgur.
-
-![pixel](http://i.imgur.com/4RuCFnD.png)
+A replacement for Pixel, called Focus is in development for both Windows, and OS X. Check it out @ http://github.com/vevix/focus
 
 ## Install
 
