@@ -1,6 +1,6 @@
 # Pixel
 
-:construction: Pixel is no longer in development :construction:
+:construction: Pixel is no longer maintained :construction:
 
 A replacement for Pixel, called Focus is in development for both Windows, and OS X. Check it out @ http://github.com/vevix/focus
 
